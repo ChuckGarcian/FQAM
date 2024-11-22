@@ -1,16 +1,34 @@
-SRC_PATH := .
-OBJ_PATH := .
-INC_PATH := .
-LIB_HOME := $(HOME)
-BLAS_LIB := $(LIB_HOME)/lib/libblas.a
-LAPACK_LIB := $(LIB_HOME)/lib/liblapack.a
-FLAME_HOME := /usr/local
-FLAME_INC := /usr/local/include
-FLAME_LIB := /usr/local/lib/libflame.a
-CC := icc
-LINKER := $(CC)
-CFLAGS := -g -O2 -Wall -I$(INC_PATH) -I$(FLAME_INC)
-LDFLAGS := -L/opt/intel/fc/em64t/10.0.026/lib
-LDFLAGS += -L/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/
-LDFLAGS += -L/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/../../../../lib64
-LDFLAGS += -lifport -lifcore -limf -lsvml -lm -lipgo -lirc -lirc_s -ldl
+SRC_PATH := ./src
+BIN_PATH := ./bin
+
+BLAS_LIB   := $(HOME)/blis/lib/libblis.a
+FLAME_LIB  := $(HOME)/libflame/lib/libflame.a
+FLAME_INC  := $(HOME)/libflame/include
+
+# indicate where the object files are to be created
+CC         := gcc
+LINKER     := $(CC)
+CFLAGS     := -O3 -Wall -I$(FLAME_INC) -I$(CBLAS_INC) -m64 -msse3 
+FFLAGS     := $(CFLAGS) 
+LDFLAGS    := -m64 -lm -fopenmp
+
+# add files in which your implementations are coded
+TEST_OBJS    := driver.o \
+
+TEST_OBJS  := $(addprefix $(SRC_PATH)/, $(TEST_OBJS))
+
+build: $(TEST_OBJS)
+	$(LINKER) $(TEST_OBJS) $(FLAME_LIB) $(LAPACK_LIB) $(BLAS_LIB) $(LDFLAGS) -o ./$(BIN_PATH)/driver.x
+
+run: 
+	./$(BIN_PATH)/driver.x
+
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.f
+	$(FC) $(FFLAGS) -c $< -o $@
+
+clean:
+	rm -f *.o $(OBJ_PATH)/*.o *~ core *.x
