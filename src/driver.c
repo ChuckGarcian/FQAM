@@ -7,8 +7,10 @@
 */
 
 #include <stdio.h>
+#include "FQAM_Rendering.h"
 
 int main (void)
 {
-  printf ("Hello world");
+  // FQAM_show_diagram ();
+  printf ("\n\n----Finished Executing Main----\n");
 }

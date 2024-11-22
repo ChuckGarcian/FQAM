@@ -7,11 +7,23 @@
 
 */
 
+#include <stdio.h>
+#include "raylib.h"
 #include "FQAM_Rendering.h"
-
 
 // Renders Stage. Returns on render completion with an error code fqam_error on event of error.
 FQAM_Error FQAM_show_diagram (void)
 {
+  const int screenWidth = 800;
+  const int screenHeight = 600;
+  InitWindow(screenWidth, screenHeight, "Raylib basic window");
+  SetTargetFPS(60);
+  while (!WindowShouldClose()) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("It works!", 20, 20, 20, BLACK);
+    EndDrawing();
+  }
+  CloseWindow();
   return 1; // Success
 }

@@ -1,32 +1,57 @@
-SRC_PATH := src
-BIN_PATH := bin
-BLAS_LIB   := $(HOME)/blis/lib/libblis.a
-FLAME_LIB  := $(HOME)/libflame/lib/libflame.a
-FLAME_INC  := $(HOME)/libflame/include
+# Directories
+SRC_DIR := src
+BIN_DIR := bin
+LIB_DIR := lib
+RAYLIB_SRC := raylib/src
 
-CC         := gcc
-LINKER     := $(CC)
-CFLAGS     := -O3 -Wall -I$(FLAME_INC) -I$(CBLAS_INC) -m64 -msse3 
-FFLAGS     := $(CFLAGS) 
-LDFLAGS    := -m64 -lm -fopenmp
+# External libraries
+BLAS_LIB := $(HOME)/blis/lib/libblis.a
+FLAME_LIB := $(HOME)/libflame/lib/libflame.a
+FLAME_INC := $(HOME)/libflame/include
 
-SRC_OBJS    := driver.o
-SRC_OBJS    := $(addprefix $(BIN_PATH)/, $(SRC_OBJS))
+# Compiler settings
+CC := gcc
+LINKER := $(CC)
+CFLAGS := -O3 -Wall -I$(FLAME_INC) -I$(CBLAS_INC) -m64 -msse3 
+FFLAGS := $(CFLAGS)
 
-# UTIL_OBJS    := list.o
-# UTIL_OBJS    := $(addprefix $(BIN_PATH)/, $(UTIL_OBJS))
+# Source and object files
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(patsubst $(SRC_DIR)/%.c,%.o,$(SRCS))
 
-build: $(SRC_OBJS) 
-	$(LINKER) $(SRC_OBJS) $(FLAME_LIB) $(BLAS_LIB) $(LDFLAGS) -o ./$(BIN_PATH)/driver.x
+# Linker and include flags
+LFLAGS := -L./$(LIB_DIR)/ -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+LFLAGS += -m64 -lm -fopenmp
+IFLAGS := -I./include/
 
-run: 
-	./$(BIN_PATH)/driver.x
+# Default target
+default: run
 
-$(BIN_PATH)/%.o: $(SRC_PATH)/%.c 
-	$(CC) $(CFLAGS) -c $< -o $@
+# Build targets
+build: $(BIN_DIR)/app.x
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $(BIN_PATH)/$@
+$(BIN_DIR)/app.x: $(OBJS)
+	mkdir -p $(BIN_DIR)
+	$(CC) $^ $(CFLAGS) $(FLAME_LIB) $(BLAS_LIB) $(IFLAGS) $(LFLAGS) -o $@
+
+%.o: $(SRC_DIR)/%.c
+	$(CC) -c $(CFLAGS) $(IFLAGS) $< -o $@
+
+# Raylib targets
+build_raylib:
+	make -C $(RAYLIB_SRC) PLATFORM=PLATFORM_DESKTOP && \
+	cp $(RAYLIB_SRC)/libraylib.a $(LIB_DIR)
+
+# Cleaning targets
+clean_raylib:
+	make -C $(RAYLIB_SRC) clean
+	$(RM) $(LIB_DIR)/libraylib.a
 
 clean:
-	rm -f $(BIN_PATH)/*.o $(BIN_PATH)/*.x
+	$(RM) -rf $(BIN_DIR) $(OBJS)
+
+# Run target
+run: build
+	$(BIN_DIR)/app.x
+
+.PHONY: all build_raylib clean_raylib clean default run
