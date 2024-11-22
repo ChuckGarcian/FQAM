@@ -1,0 +1,16 @@
+SRC_PATH := .
+OBJ_PATH := .
+INC_PATH := .
+LIB_HOME := $(HOME)
+BLAS_LIB := $(LIB_HOME)/lib/libblas.a
+LAPACK_LIB := $(LIB_HOME)/lib/liblapack.a
+FLAME_HOME := /usr/local
+FLAME_INC := /usr/local/include
+FLAME_LIB := /usr/local/lib/libflame.a
+CC := icc
+LINKER := $(CC)
+CFLAGS := -g -O2 -Wall -I$(INC_PATH) -I$(FLAME_INC)
+LDFLAGS := -L/opt/intel/fc/em64t/10.0.026/lib
+LDFLAGS += -L/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/
+LDFLAGS += -L/usr/lib/gcc/x86_64-pc-linux-gnu/3.4.6/../../../../lib64
+LDFLAGS += -lifport -lifcore -limf -lsvml -lm -lipgo -lirc -lirc_s -ldl
