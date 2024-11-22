@@ -15,8 +15,5 @@ FQAM_Error FQAM_stage_init (void);
 // Adds operator to staging list
 FQAM_Error FQAM_stage_append (FQAM_Op operator); 
 
-// Adds operator to staging list
-bool FQAM_stage_append (FQAM_Op operator); 
-
 // Free stage and operator resources. 
 FQAM_Error FQAM_stage_finalize (void); 
