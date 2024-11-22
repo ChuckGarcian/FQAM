@@ -24,20 +24,15 @@ static FQAM_Op eye_op;
 
 /* Initializes static allocated pauli operators */
 void pauli_ops_init_ (void);  // Calls operator_generator_gen() for each
-
 pauli_gen_x (int state_space); // Call operator create, 
 pauli_gen_z (int state_space);
 
-### FQAM_Operator_gen.c
+--- FQAM_Operator.c --- 
 
 FQAM_operator_create (FQAM_Operator operator, char *name)
-  Purpose: Initializes FQAM_Operator with given name
-  Notes:
-  Returns:
-
+FQAM_operator_finalize (); // Destroy FLA objects
 FQAM_operator_generate...functions () // List of functions to help universal  generate any operator. 
 
-FQAM_operator_finalize (); // Destroy FLA objects
 
 --- FQAM_Staging.c ---
 
