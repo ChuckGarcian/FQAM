@@ -10,7 +10,7 @@ Currently being worked on. The goal is to provide a framework to think visually 
 - [Libflame](https://github.com/flame/libflame)
 - [A BLAS implementation](https://github.com/flame/blis)
 
-Theoretically, any BLAS implementation works, or even an OpenBLAS or LAPACK implementation. However, all have been untested. One just needs to figure out how to link the desired DLA backend with Libflame, and it should work in theory. More details on Libflame can be found [here.](https://github.com/flame/libflame/blob/master/docs/libflame/libflame.pdf)
+Theoretically, any BLAS implementation works, like [OpenBLAS](https://github.com/OpenMathLib/OpenBLAS) or LAPACK implementation. However, all have been untested. One just needs to figure out how to link the desired DLA backend with Libflame, and it should work in theory. More details on Libflame can be found [here.](https://github.com/flame/libflame/blob/master/docs/libflame/libflame.pdf)
 
 ## TODO
 
