@@ -15,6 +15,17 @@ int main (void)
   FQAM_Op op;
 
   FQAM_init ();
-  FQAM_stage_append (op);
+  
+  // FQAM_operator_create (op, "Hello");
+  // FQAM_stage_append (op);
+  FQAM_finalize ();
+}
+
+int test_1 (void)
+{  
+  FQAM_Op op;
+
+  FQAM_init ();
+  // FQAM_stage_append (op);
   FQAM_finalize ();
 }
