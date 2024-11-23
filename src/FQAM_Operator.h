@@ -1,8 +1,16 @@
+#include "FLAME.h"
+#include "list.h"
+
+#define FQAM_SUCCESS           (-1)
+#define FQAM_FAILURE           (-2)
 
 typedef int FQAM_Error;
-typedef struct {
-  char *name;
-  // FLA_obj  
+
+typedef struct 
+{
+  struct list_elem elem;  // Used in stage
+  char *name;             // Operator Name    
+  FLA_Obj mat_repr;       // Operator Matrix Representation
 } FQAM_Op;
 
 FQAM_Error FQAM_operator_init (void);

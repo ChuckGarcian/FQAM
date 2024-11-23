@@ -9,11 +9,15 @@
 #include "FQAM_Operator.h"
 #include "stdbool.h"
 
-// Returns 
-FQAM_Error FQAM_stage_init (void);
+// Returns
+FQAM_Error FQAM_stage_init(void);
 
-// Adds operator to staging list
-FQAM_Error FQAM_stage_append (FQAM_Op operator); 
+// Initialize an operator 
+FQAM_Error FQAM_operator_create (FQAM_Op operator, char *name);
 
 // Free stage and operator resources. 
-FQAM_Error FQAM_stage_finalize (void); 
+FQAM_Error FQAM_operator_finalize (void);
+
+// Placeholder for a set of different functions to assist in creating operator matrix representations
+// functions could include: tensor_product, generate_projector, measure_op, ect
+FQAM_Error FQAM_operator_generate_functions (FQAM_Op operator, char *name);
