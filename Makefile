@@ -14,6 +14,7 @@ CC := gcc
 LINKER := $(CC)
 CFLAGS := -O3 -Wall -I$(FLAME_INC) -I$(CBLAS_INC) -m64 -msse3 
 FFLAGS := $(CFLAGS)
+DEBUG_FLAGS := -g -O0
 
 # Source and object files
 SRCS := $(wildcard $(SRC_DIR)/*.c)
@@ -29,6 +30,9 @@ default: run
 
 # Build targets
 build: $(BIN_DIR)/app.x
+
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: $(BIN_DIR)/app.x
 
 $(BIN_DIR)/app.x: $(OBJS)
 	mkdir -p $(BIN_DIR)

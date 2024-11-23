@@ -9,32 +9,47 @@
 #include "FQAM.h"
 #include "list.h"
 
+#define ASSERTF_DEF_ONCE
+#include "assertf.h"
+
 // Stage data structure; Opaque (User should not access explicitly)
-struct list stage; 
+struct list stage;
 
 // Adds operator to staging list
-FQAM_Error FQAM_init (void)
-{
-  list_init (&stage);
-  FLA_Init ();
-  printf ("Initialized! \n");
+FQAM_Error FQAM_init(void) {
+  list_init(&stage);
+  FLA_Init();
+  printf("Initialized! \n");
   return FQAM_SUCCESS;
 }
 
-
 /* Free resources fqam. Includes all FQAM modules */
-FQAM_Error FQAM_finalize(void)
-{
+FQAM_Error FQAM_finalize(void) {
   struct list_elem *e;
-  
-  // Free all operator matrices 
-  for (e = list_begin (&stage); e != list_end (&stage); e = list_next (e))
-  {
-    FQAM_Op *op = list_entry (e, FQAM_Op, elem);
-    FLA_Obj_free (&op->mat_repr);
+
+  // Free all operator matrices
+  for (e = list_begin(&stage); e != list_end(&stage); e = list_next(e)) {
+    FQAM_Op *op = list_entry(e, FQAM_Op, elem);
+    FLA_Obj_free(&op->mat_repr);
   }
 
-  FLA_Finalize ();
-  printf ("Finalized! \n");
+  FLA_Finalize();
+  printf("Finalized! \n");
+  return FQAM_SUCCESS;
+}
+
+/* Appends operator to stage.
+
+Returns: FQAM_SUCCESS on success, other FQAM_FAILURE
+Args:
+  operator: Operator object. Must be initialized otherwise an assertion
+            fault is triggered.
+*/
+FQAM_Error FQAM_stage_append(FQAM_Op operator) {
+  // Ensure operator has been initialized
+  assertf(FLA_Obj_buffer_is_null(operator.mat_repr),
+          "Error: Tried appending uninitialized operator object");
+
+  list_push_back(&stage, &operator.elem);
   return FQAM_SUCCESS;
 }

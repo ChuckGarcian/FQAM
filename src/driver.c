@@ -11,24 +11,10 @@
 #include "FQAM.h"
 
 int main (void)
-{
-  FQAM_init ();
-  FQAM_finalize ();
-}
+{  
+  FQAM_Op op;
 
-int main2 (void)
-{
-  FLA_Obj r;
-  int mn = 4;
-  FLA_Obj_create (FLA_COMPLEX, mn, 1, 0, 0, &r);
-  
-  char *header = "Header!";
-  char *format = "%d";
-  char *footer = "Footer!";
-  
-  FLA_Obj_show (header, r, format, footer);
-  int dim = FLA_Obj_vector_dim (r);
-  printf ("dim: %d", dim);
-  // FQAM_show_diagram ();
-  printf ("\n\n----Finished Executing Main----\n");
+  FQAM_init ();
+  FQAM_stage_append (op);
+  FQAM_finalize ();
 }
