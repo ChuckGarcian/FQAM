@@ -1,0 +1,4 @@
+
+## Methodology
+
+Ideally, we would like to be able to think of state transitions in a way that is similar to boolean logic. That is, each state transition can be expressed as $a \land b \ldots$ in boolean algebra. In FQAM, we want to be able to do the same but with quantum values instead of logic values -- to easily express the transformation of state with respect to the individual state elements (qubits) in a functional way without having to explicitly think of the matrix or gate representation. Once we have a specification for the quantum algorithm in a nice notation, we can later formally derive the unitary/matrix representation using FLAME-like methodologies. One avenue I want to explore is the automatic derivation of algorithm variants which implement the specification; that is to say, the automatic derivation of the sequence of unitaries which implement the spec. This has been done before in the classical DLA.
