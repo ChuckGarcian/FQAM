@@ -1,5 +1,5 @@
 
-## 11.23.24 Sunday
+## 11.23.24 Saturday
 
 Current:
 
@@ -11,3 +11,9 @@ Next:
 - Goal is to get staging logic to work.
 - Be able to stage new operators to list.
 - Then start execution or render.
+
+## 11.25.24 Monday
+
+Completed:
+  
+  - Update pauli module with better function names

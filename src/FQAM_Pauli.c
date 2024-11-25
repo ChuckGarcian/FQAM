@@ -26,33 +26,22 @@ static void generate_y (void);
 static void generate_eye (void);
 
 /* Initializes static allocated pauli operators */
-void pauli_ops_init_ (void)
+void _pauli_ops_init_ (void)
 {
   
   generate_x ();
   generate_z ();
   generate_eye ();
-  generate_y ();
-  
-  x_op.initialized = true;
-  z_op.initialized = true;
-  y_op.initialized = true;
-  eye_op.initialized = true;
-  
+  generate_y (); 
 }
 
-// Call operator create,
-FQAM_Op *pauli_gen_x (void) 
-{
-  return &x_op;
-}
-
-FQAM_Op * pauli_gen_z (void);
-FQAM_Op * pauli_gen_y (void);
-FQAM_Op * pauli_gen_eye (void);
+FQAM_Op *FQAM_Pauli_x (void) {FQAM_stage_append (&x_op);} 
+FQAM_Op *FQAM_Pauli_y (void) {FQAM_stage_append (&y_op);} 
+FQAM_Op *FQAM_Pauli_z (void) {FQAM_stage_append (&z_op);}
+FQAM_Op *FQAM_Pauli_eye (void) {FQAM_stage_append (&eye_op);} 
 
 /*
-  TODO: The way generated the pauli matrices bellow is just temparary. In the future I
+  TODO: The way generated the pauli matrices bellow is just temporary. In the future I
   need to make them call into operators module
 */
 static void generate_x (void)
@@ -93,10 +82,10 @@ static void generate_z (void)
   rs = FLA_Obj_row_stride (z_op.mat_repr);
   cs = FLA_Obj_col_stride (z_op.mat_repr);
 
-  *(buf + incr_addr (0, 0)) = 1; // Set X[0,0] = 0
+  *(buf + incr_addr (0, 0)) = 1;  // Set X[0,0] = 0
   *(buf + incr_addr (1, 1)) = -1; // Set X[1,1] = 0
-  *(buf + incr_addr (0, 1)) = 0; // Set X[0,1] = 1
-  *(buf + incr_addr (1, 0)) = 0; // Set X[1,0] = 1
+  *(buf + incr_addr (0, 1)) = 0;  // Set X[0,1] = 1
+  *(buf + incr_addr (1, 0)) = 0;  // Set X[1,0] = 1
 };
 
 static void generate_eye (void)

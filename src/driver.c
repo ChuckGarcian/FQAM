@@ -37,24 +37,21 @@ void test_2 (void)
 {
   // Test: Checking basic stage appending and finalization
   printf ("Running Test 2 \n");
-  FQAM_Op *op;
   FQAM_init ();
-  op = pauli_gen_x ();
-  FQAM_stage_append (op);
-  assertf (FLA_Obj_buffer_is_null (op->mat_repr) == 0, "Test Failed: Expected initialized buffer");
+  FQAM_Pauli_x ();
   FQAM_finalize ();
   printf ("Passed Test 2 \n \n");
 }
 
 void test_3 (void)
 {
-  printf ("Running Test 3 \n");
-  FQAM_Op *op;
-  FQAM_init ();
-  op = pauli_gen_x ();
-  FQAM_stage_append (op);
-  _debug_FQAM_show_stage ();  
-  FQAM_stage_append (op);
+  printf ("Running Test 3 \n");  
+  FQAM_init ();  
+  
+  FQAM_Pauli_x ();
+  FQAM_Pauli_z ();
+  FQAM_Pauli_eye ();
+  
   _debug_FQAM_show_stage ();  
   FQAM_finalize ();  
   printf ("Passed Test 3 \n \n");

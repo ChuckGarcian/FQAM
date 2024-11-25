@@ -11,7 +11,7 @@
 #include "arraylist.h"
 #include "assertf.h"
 
-extern void pauli_ops_init_ (void);
+extern void _pauli_ops_init_ (void);  
 static int _FQAM_initialized = false;
 
 // Stage data structure; Opaque (User should not access explicitly)
@@ -24,7 +24,7 @@ FQAM_Error FQAM_init (void)
   _FQAM_initialized = true;
   
   FLA_Init ();
-  pauli_ops_init_ ();
+  _pauli_ops_init_ ();
   
   printf ("FQAM: Initialized \n");
   return FQAM_SUCCESS;
