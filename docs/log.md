@@ -4,10 +4,10 @@
 Current:
 
 - Added 'assertf.h' for better assert statements
-- Implemented temprary generators for pauli x, z and I. 
+- Implemented temporary generators for pauli x, z and I. 
 
 Next:
 
 - Goal is to get staging logic to work.
 - Be able to stage new operators to list.
-- Then start execution or render
+- Then start execution or render.

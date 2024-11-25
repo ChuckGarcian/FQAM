@@ -6,26 +6,56 @@
     directory, or at http://opensource.org/licenses/BSD-3-Clause
 */
 
-#include <stdio.h>
 #include "FLAME.h"
 #include "FQAM.h"
+#include <stdio.h>
+
+#define ASSERTF_DEF_ONCE
+#include "assertf.h"
+
+void test_1 (void);
+void test_2 (void);
+void test_3 (void);
 
 int main (void)
-{  
-  FQAM_Op op;
-
-  FQAM_init ();
-  
-  // FQAM_operator_create (op, "Hello");
-  // FQAM_stage_append (op);
-  FQAM_finalize ();
+{
+  test_1();
+  test_2();
+  test_3();  
 }
 
-int test_1 (void)
-{  
-  FQAM_Op op;
-
+void test_1 (void)
+{
+  // Test: basic test ensuring FQAM can initialize and finalize
+  printf ("Running Test 1 \n");
   FQAM_init ();
-  // FQAM_stage_append (op);
   FQAM_finalize ();
+  printf ("Passed Test 1\n\n");
+}
+
+void test_2 (void)
+{
+  // Test: Checking basic stage appending and finalization
+  printf ("Running Test 2 \n");
+  FQAM_Op *op;
+  FQAM_init ();
+  op = pauli_gen_x ();
+  FQAM_stage_append (op);
+  assertf (FLA_Obj_buffer_is_null (op->mat_repr) == 0, "Test Failed: Expected initialized buffer");
+  FQAM_finalize ();
+  printf ("Passed Test 2 \n \n");
+}
+
+void test_3 (void)
+{
+  printf ("Running Test 3 \n");
+  FQAM_Op *op;
+  FQAM_init ();
+  op = pauli_gen_x ();
+  FQAM_stage_append (op);
+  _debug_FQAM_show_stage ();  
+  FQAM_stage_append (op);
+  _debug_FQAM_show_stage ();  
+  FQAM_finalize ();  
+  printf ("Passed Test 3 \n \n");
 }

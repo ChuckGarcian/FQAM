@@ -6,18 +6,18 @@
     directory, or at http://opensource.org/licenses/BSD-3-Clause
 */
 
-#include "FQAM_Pauli_primitives.h"
+#include "FQAM.h"
 #include <string.h>
 
 #define TMP_DATA_TYPE FLA_INT
 
 #define incr_addr(i, j) ((i * rs) + (j * cs)) // Address incremental
 
-static int dim = 2;
-static FQAM_Op x_op;
-static FQAM_Op z_op;
-static FQAM_Op y_op;
-static FQAM_Op eye_op;
+int dim = 2;
+FQAM_Op x_op;
+FQAM_Op z_op;
+FQAM_Op y_op;
+FQAM_Op eye_op;
 
 // Call operator create,
 static void generate_x (void);
@@ -28,17 +28,29 @@ static void generate_eye (void);
 /* Initializes static allocated pauli operators */
 void pauli_ops_init_ (void)
 {
+  
   generate_x ();
   generate_z ();
   generate_eye ();
   generate_y ();
+  
+  x_op.initialized = true;
+  z_op.initialized = true;
+  y_op.initialized = true;
+  eye_op.initialized = true;
+  
 }
 
 // Call operator create,
-void pauli_gen_x (void);
-void pauli_gen_z (void);
-void pauli_gen_y (void);
-void pauli_gen_eye (void);
+FQAM_Op *pauli_gen_x (void) 
+{
+  return &x_op;
+}
+
+FQAM_Op * pauli_gen_z (void);
+FQAM_Op * pauli_gen_y (void);
+FQAM_Op * pauli_gen_eye (void);
+
 /*
   TODO: The way generated the pauli matrices bellow is just temparary. In the future I
   need to make them call into operators module
@@ -46,11 +58,10 @@ void pauli_gen_eye (void);
 static void generate_x (void)
 {
   int rs, cs;
-
-  char name[] = "Not";
-  strcpy (eye_op.name, name);
-
-  // Create matrix
+  char name[] = "not \0";
+  
+  // Initialize operator and set FLA matrix
+  FQAM_Operator_init (&x_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &x_op.mat_repr);
 
   // Get buffer address
@@ -64,19 +75,15 @@ static void generate_x (void)
   *(buf + incr_addr (1, 1)) = 0; // Set X[1,1] = 0
   *(buf + incr_addr (0, 1)) = 1; // Set X[0,1] = 1
   *(buf + incr_addr (1, 0)) = 1; // Set X[1,0] = 1
-
-  // Show Operator information
-  FQAM_Operator_show (x_op);
 }
 
 static void generate_z (void)
 {
   int rs, cs;
 
-  char name[] = "Invert";
-  strcpy (eye_op.name, name);
-
-  // Create matrix
+  char name[] = "Invert \0";
+  
+  FQAM_Operator_init (&z_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &z_op.mat_repr);
 
   // Get buffer address
@@ -90,15 +97,12 @@ static void generate_z (void)
   *(buf + incr_addr (1, 1)) = -1; // Set X[1,1] = 0
   *(buf + incr_addr (0, 1)) = 0; // Set X[0,1] = 1
   *(buf + incr_addr (1, 0)) = 0; // Set X[1,0] = 1
-
-  // Show operator data
-  FQAM_Operator_show (z_op);
 };
 
 static void generate_eye (void)
 {
-  char name[] = "Identity";
-  strcpy (eye_op.name, name);
+  char name[] = "Identity \0";
+  FQAM_Operator_init (&eye_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &eye_op.mat_repr);
   FLA_Set_to_identity (eye_op.mat_repr);
 }

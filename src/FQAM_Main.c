@@ -6,51 +6,46 @@
     directory, or at http://opensource.org/licenses/BSD-3-Clause
 */
 
-
 #include <stdbool.h>
 #include "FQAM.h"
-#include "list.h"
-
-#define ASSERTF_DEF_ONCE
+#include "arraylist.h"
 #include "assertf.h"
 
 extern void pauli_ops_init_ (void);
-
 static int _FQAM_initialized = false;
 
 // Stage data structure; Opaque (User should not access explicitly)
-struct list stage;
+arraylist *stage;
 
 // Adds operator to staging list
 FQAM_Error FQAM_init (void)
-{
-  list_init (&stage);
-  FLA_Init ();
-  printf ("Initialized! \n");
-  pauli_ops_init_ ();
-
+{  
+  stage = arraylist_create ();  
   _FQAM_initialized = true;
+  
+  FLA_Init ();
+  pauli_ops_init_ ();
+  
+  printf ("FQAM: Initialized \n");
   return FQAM_SUCCESS;
 }
 
-/* Free resources fqam. Includes all FQAM modules */
+/* Free resources FQAM. Includes all FQAM modules */
 FQAM_Error FQAM_finalize (void)
 {
-  if (_FQAM_initialized == 0) return FQAM_FAILURE;
-
-  struct list_elem *e;
+  assertf (FQAM_initialized (), "Error: Tried appending uninitialized operator object");
 
   // Free all operator matrices
-  e = list_head (&stage);
-  
-  while ((e = list_next (e)) != list_end (&stage))
+  for (int idx = 0; idx < stage->size; idx ++)
   {
-    FQAM_Op *op = list_entry (e, FQAM_Op, elem);
-    FLA_Obj_free (&op->mat_repr);
+    FQAM_Op *operator = arraylist_get (stage, idx);
+    FQAM_Operator_free (operator);
   }
+
+  FLA_Finalize ();  
+  arraylist_destroy (stage);
   
-  FLA_Finalize ();
-  printf ("Finalized! \n");
+  printf ("FQAM: Finalized\n");
   return FQAM_SUCCESS;
 }
 
@@ -61,17 +56,36 @@ Args:
   operator: Operator object. Must be initialized otherwise an assertion
             fault is triggered.
 */
-FQAM_Error FQAM_stage_append (FQAM_Op operator)
+FQAM_Error FQAM_stage_append (FQAM_Op *operator)
 {
   // Ensure operator has been initialized
-  assertf (FLA_Obj_buffer_is_null (operator.mat_repr),
+  assertf (FQAM_Operator_initialized (operator), "Error: Tried appending uninitialized operator object");
+  assertf (FLA_Obj_buffer_is_null (operator->mat_repr) == 0,
            "Error: Tried appending uninitialized operator object");
 
-  list_push_back (&stage, &operator.elem);
+  
+  arraylist_add (stage, (void *) operator);  
+  
   return FQAM_SUCCESS;
 }
 
 bool FQAM_initialized (void)
 {
   return _FQAM_initialized;
+}
+
+/* Debug function which prints the stage list*/
+void _debug_FQAM_show_stage (void)
+{
+  printf ("----Debug: Showing stage----\n");  
+  assertf (FQAM_initialized (), "Error: FQAM expected to be in initialized state ");
+
+  for (int idx = 0; idx < stage->size; idx ++)
+  {
+    printf ("Index: %d \n", idx); 
+    FQAM_Op *op = arraylist_get (stage, idx);
+    FQAM_Operator_show (op);    
+  }
+
+  printf ("----Debug: Done stage----\n");
 }

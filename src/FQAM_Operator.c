@@ -9,26 +9,49 @@
 #include "FQAM.h"
 #include "stdbool.h"
 
+#include "assertf.h"
+
+
 // Initialize an operator 
-FQAM_Error FQAM_operator_create (FQAM_Op operator, char *name)
+FQAM_Error FQAM_Operator_init (FQAM_Op *operator, char *name)
 {
-  if (FQAM_initialized () == false) return FQAM_FAILURE;
+  assertf (FQAM_initialized (), "Error: Stage must be initialized to create operator");
   
-  // FLA_Obj_create (operator.mat_repr, );
-  
-  printf ("FQAM_operator_create Called \n"); 
+  strcpy (operator->name, name);
+  operator->initialized = true;
   
   return FQAM_SUCCESS;
 };
 
-void FQAM_Operator_show (FQAM_Op operator)
+void FQAM_Operator_show (FQAM_Op *operator)
 {
-  FLA_Obj_show (&operator.name, operator.mat_repr, "%d", "---Done---");  
+  printf ("Operator: %s", operator->name);
+  FLA_Obj_show ("", operator->mat_repr, "%d", "");  
 }
 
-// Free stage and operator resources. 
-FQAM_Error FQAM_operator_finalize (void);
+/* Free operators resources and marks as uninitialized.
+Calling of this function is idempotent. That is attempting to free an already 
+uninitialized operator is safe and simply does nothing.
+*/
+FQAM_Error FQAM_Operator_free (FQAM_Op *operator)
+{
+  assertf (FQAM_initialized (), "Error: Operator finalization requires main to be in initialized state");
+
+  if (operator->initialized == true)
+  {
+    operator->initialized = false;
+    FLA_Obj_free (&operator->mat_repr);
+  }
+}
+
+bool FQAM_Operator_initialized (FQAM_Op *operator)
+{
+  return operator->initialized;
+}
 
 // Placeholder for a set of different functions to assist in creating operator matrix representations
 // functions could include: tensor_product, generate_projector, measure_op, ect
 FQAM_Error FQAM_operator_generate_functions (FQAM_Op operator, char *name);
+
+
+
