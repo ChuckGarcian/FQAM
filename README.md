@@ -16,6 +16,7 @@ Theoretically, any BLAS implementation works, like [OpenBLAS](https://github.com
 ## Credits
 
 - [Arraylist implemention by Marek Web](https://github.com/marekweb/datastructs-c/tree/master?tab=readme-ov-file)
+- [C Assert macro library](https://github.com/leiless/assertf.h) by Leiless
 
 ## TODO
 
