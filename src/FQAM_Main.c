@@ -74,6 +74,8 @@ bool FQAM_initialized (void)
   return _FQAM_initialized;
 }
 
+void FQAM_compute_outcomes (void);
+
 /* Debug function which prints the stage list*/
 void _debug_FQAM_show_stage (void)
 {
