@@ -13,6 +13,8 @@
 #define ASSERTF_DEF_ONCE
 #include "assertf.h"
 
+static int test_dim = 1;
+
 void test_1 (void);
 void test_2 (void);
 void test_3 (void);
@@ -29,7 +31,7 @@ void test_1 (void)
 {
   // Test: basic test ensuring FQAM can initialize and finalize
   printf ("Running Test 1 \n");
-  FQAM_init ();
+  FQAM_init (test_dim, 0);
   FQAM_finalize ();
   printf ("Passed Test 1\n\n");
 }
@@ -38,7 +40,7 @@ void test_2 (void)
 {
   // Test: Checking basic stage appending and finalization
   printf ("Running Test 2 \n");
-  FQAM_init ();
+  FQAM_init (test_dim, 0);
   FQAM_Pauli_x ();
   FQAM_finalize ();
   printf ("Passed Test 2 \n \n");
@@ -47,7 +49,7 @@ void test_2 (void)
 void test_3 (void)
 {
   printf ("Running Test 3 \n");  
-  FQAM_init ();  
+  FQAM_init (test_dim, 0);  
   
   FQAM_Pauli_x ();
   FQAM_Pauli_z ();
@@ -61,7 +63,7 @@ void test_3 (void)
 void test_4 (void)
 {
   printf ("Running Test 4 \n");  
-  FQAM_init ();  
+  FQAM_init (test_dim, 0);  
   
   FQAM_Pauli_x ();
   FQAM_Pauli_z ();

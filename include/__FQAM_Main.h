@@ -1,9 +1,9 @@
 /*Life Cycle */
-FQAM_Error FQAM_init (void);
-FQAM_Error FQAM_finalize (void);
+void FQAM_init(size_t dim, unsigned int initial_state);
+void FQAM_finalize (void);
 
 /* Stage Commands */
-FQAM_Error FQAM_stage_append (FQAM_Op *operator); // Adds operator to staging list
+void FQAM_stage_append (FQAM_Op *operator); // Adds operator to staging list
 void FQAM_stage_show (void);
 
 void FQAM_compute_outcomes (void);

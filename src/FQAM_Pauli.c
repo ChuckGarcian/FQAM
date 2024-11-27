@@ -13,7 +13,7 @@
 
 #define incr_addr(i, j) ((i * rs) + (j * cs)) // Address incremental
 
-int dim = 2;
+int test_dim = 2;
 FQAM_Op x_op;
 FQAM_Op z_op;
 FQAM_Op y_op;
@@ -26,7 +26,7 @@ static void generate_y (void);
 static void generate_eye (void);
 
 /* Initializes static allocated pauli operators */
-void _pauli_ops_init_ (void)
+void pauli_ops_init_ (void)
 {
   generate_x ();
   generate_z ();
@@ -49,8 +49,8 @@ static void generate_x (void)
   char name[] = "not \0";
   
   // Initialize operator and set FLA matrix
-  FQAM_Operator_init (&x_op, name);  
-  FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &x_op.mat_repr);
+  FQAM_Operator_create (&x_op, name);  
+  FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &x_op.mat_repr);
 
   // Get buffer address
   int *buf = FLA_Obj_buffer_at_view (x_op.mat_repr);
@@ -71,8 +71,8 @@ static void generate_z (void)
 
   char name[] = "Invert \0";
   
-  FQAM_Operator_init (&z_op, name);  
-  FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &z_op.mat_repr);
+  FQAM_Operator_create (&z_op, name);  
+  FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &z_op.mat_repr);
 
   // Get buffer address
   int *buf = FLA_Obj_buffer_at_view (z_op.mat_repr);
@@ -90,9 +90,9 @@ static void generate_z (void)
 static void generate_eye (void)
 {
   char name[] = "Identity \0";
-  FQAM_Operator_init (&eye_op, name);  
-  FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &eye_op.mat_repr);
+  FQAM_Operator_create (&eye_op, name);  
+  FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &eye_op.mat_repr);
   FLA_Set_to_identity (eye_op.mat_repr);
 }
 
-static void generate_y (void) { FLA_Obj_create (TMP_DATA_TYPE, dim, dim, 0, 0, &y_op); }
+static void generate_y (void) { FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &y_op); }

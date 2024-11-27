@@ -7,90 +7,123 @@
 */
 
 #include <stdbool.h>
-#include "FQAM.h"
+#include <math.h>
+
 #include "arraylist.h"
 #include "assertf.h"
+#include "FQAM.h"
 
-extern void _pauli_ops_init_ (void);  
-static int _FQAM_initialized = false;
+static bool _FQAM_initialized = false;
 
-// Stage data structure; Opaque (User should not access explicitly)
+// Stage Objects Opaque (Users should not access explicitly)
+double _Complex *statevector;
 arraylist *stage;
 
-// Adds operator to staging list
-FQAM_Error FQAM_init (void)
-{  
-  stage = arraylist_create ();  
-  _FQAM_initialized = true;
-  
-  FLA_Init ();
-  _pauli_ops_init_ ();
-  
-  printf ("FQAM: Initialized \n");
-  return FQAM_SUCCESS;
-}
-
-/* Free resources FQAM. Includes all FQAM modules */
-FQAM_Error FQAM_finalize (void)
-{
-  assertf (FQAM_initialized (), "Error: Tried appending uninitialized operator object");
-
-  // Free all operator matrices
-  for (int idx = 0; idx < stage->size; idx ++)
-  {
-    FQAM_Op *operator = arraylist_get (stage, idx);
-    FQAM_Operator_free (operator);
-  }
-
-  FLA_Finalize ();  
-  arraylist_destroy (stage);
-  
-  printf ("FQAM: Finalized\n");
-  return FQAM_SUCCESS;
-}
-
-/* Appends operator to stage.
-
-Returns: FQAM_SUCCESS on success, other FQAM_FAILURE
-Args:
-  operator: Operator object. Must be initialized otherwise an assertion
-            fault is triggered.
+/*
+Arguments:
+    size_t dim: Dimension of Hilbert space
+    unsigned int initial_state: Nonnegative integer to initialize statevector to
 */
-FQAM_Error FQAM_stage_append (FQAM_Op *operator)
+void FQAM_init (size_t dim, unsigned int initial_state)
 {
-  // Ensure operator has been initialized
-  assertf (FQAM_Operator_initialized (operator), "Error: Tried appending uninitialized operator object");
-  assertf (FLA_Obj_buffer_is_null (operator->mat_repr) == 0,
-           "Error: Tried appending uninitialized operator object");
+    // Initialize Flame
+    FLA_Init ();
+    
+    // Initialize Statevector
+    int i = 0;
+    statevector = (double _Complex *)calloc (sizeof (double _Complex), pow (2, dim));
+    assertf (statevector, "Error: Failed to allocate statevector");
 
-  
-  arraylist_add (stage, (void *) operator);  
-  
-  return FQAM_SUCCESS;
+    while (initial_state > 0)
+    {
+        statevector[i++] = initial_state % 2 + 0.0 * I;
+        initial_state /= 2;
+    }
+
+    // Initialize stage
+    stage = arraylist_create ();
+    _FQAM_initialized = true;
+    
+    pauli_ops_init_ (); // TODO: Add way to pass if built in operators should be initialized
+    printf ("FQAM: Initialized\n");
+}
+
+/*
+Free resources in FQAM. Includes all FQAM modules.
+*/
+void FQAM_finalize (void)
+{
+    assertf (FQAM_initialized (), "Error: Tried to finalize uninitialized FQAM");
+
+    // Free all operator matrices
+    for (int idx = 0; idx < stage->size; idx++)
+    {
+        FQAM_Op *operator = arraylist_get (stage, idx);
+        FQAM_Operator_free (operator);
+    }
+
+    FLA_Finalize ();
+    arraylist_destroy (stage);
+    
+    printf ("FQAM: Finalized\n");
+    return FQAM_SUCCESS;
+}
+
+/*
+Appends operator to stage.
+
+Returns: 
+    FQAM_SUCCESS on success, FQAM_FAILURE otherwise
+
+Arguments:
+    operator: Operator object. Must be initialized, otherwise an assertion
+             fault is triggered.
+*/
+void FQAM_stage_append (FQAM_Op *operator)
+{
+    // Ensure operator has been initialized
+    assertf (FQAM_Operator_initialized (operator),
+            "Error: Tried appending uninitialized operator object");
+    assertf (FLA_Obj_buffer_is_null (operator->mat_repr) == 0,
+            "Error: Tried appending operator with null matrix representation");
+    
+    arraylist_add (stage, (void *)operator);
+    
+    return FQAM_SUCCESS;
 }
 
 bool FQAM_initialized (void)
 {
-  return _FQAM_initialized;
+    return _FQAM_initialized;
 }
 
 void FQAM_compute_outcomes (void)
 {
-  
+    assertf (FQAM_initialized (), "Error: Computing in uninitialized stage\n");
+
+    for (int idx = 0; idx < stage->size; idx++)
+    {
+        FQAM_Op *operator = arraylist_get (stage, idx);
+        FQAM_Operator_free (operator);
+    }
 }
 
-/* Debug function which prints the stage list*/
+/*
+Debug function which prints the stage list
+*/
 void _debug_FQAM_show_stage (void)
 {
-  printf ("----Debug: Showing stage----\n");  
-  assertf (FQAM_initialized (), "Error: FQAM expected to be in initialized state ");
+    printf ("----Debug: Showing stage----\n");
+    
+    assertf (FQAM_initialized (), "Error: FQAM expected to be in initialized state");
 
-  for (int idx = 0; idx < stage->size; idx ++)
-  {
-    printf ("Index: %d \n", idx); 
-    FQAM_Op *op = arraylist_get (stage, idx);
-    FQAM_Operator_show (op);    
-  }
-
-  printf ("----Debug: Done stage----\n");
+    for (int idx = 0; idx < stage->size; idx++)
+    {
+        printf ("Index: %d\n", idx);
+        
+        FQAM_Op *op = arraylist_get (stage, idx);
+        FQAM_Operator_show (op);
+    }
+    
+    printf ("----Debug: Done stage----\n");
 }
