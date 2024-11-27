@@ -31,7 +31,8 @@ void test_1 (void)
 {
   // Test: basic test ensuring FQAM can initialize and finalize
   printf ("Running Test 1 \n");
-  FQAM_init (test_dim, 0);
+  FQAM_init (4, 3);
+  FQAM_show_statevector (); // Should output 0010
   FQAM_finalize ();
   printf ("Passed Test 1\n\n");
 }
