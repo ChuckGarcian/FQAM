@@ -22,6 +22,7 @@ int main (void)
   test_1();
   test_2();
   test_3();  
+  test_4();  
 }
 
 void test_1 (void)
@@ -55,4 +56,19 @@ void test_3 (void)
   _debug_FQAM_show_stage ();  
   FQAM_finalize ();  
   printf ("Passed Test 3 \n \n");
+}
+
+void test_4 (void)
+{
+  printf ("Running Test 4 \n");  
+  FQAM_init ();  
+  
+  FQAM_Pauli_x ();
+  FQAM_Pauli_z ();
+  FQAM_Pauli_eye ();
+  
+  _debug_FQAM_show_stage ();  
+  FQAM_compute_outcomes ();
+  FQAM_finalize ();  
+  printf ("Passed Test 4 \n \n");
 }

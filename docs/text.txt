@@ -1,0 +1,44 @@
+typedef struct {
+  double  
+} FQAM_Basis;
+
+FQAM_Basis_standard ();
+FQAM_Basis_hadamard ();
+
+// Stores the result of the outer product of given operators ket0 and ket1
+FQAM_Op_outer (ket0, ket1, outer2);
+
+// Returns orthonormal eigenstate of the basis states specified by angle
+FQAM_Basis FQAM_Basis_state (int eigenstate, double angle);
+
+FQAM_Basis_standard ();
+
+// Example of creating a not using NOT
+void FQAM_not ()
+{
+  FQAM_op ket0;
+  FQAM_op ket1;
+  FQAM_op outer1, outer 2;
+  FQAM_op res;
+  
+  FQAM_Op_create (op);
+  
+  ket0 = FQAM_Basis_standard (0);
+  ket1 = FQAM_Basis_standard (1);
+  
+  // |0><1|
+  FQAM_Op_outer (ket1, ket0, outer);
+
+  // |1><0|
+  FQAM_Op_outer (ket0, ket1, outer2);
+
+  FQAM_Op_add (1, outer1, res);
+  FQAM_Op_add (1, outer2, res);
+}
+
+
+void example_initialization (void)
+{
+
+  set_initial_state ();
+}

@@ -28,7 +28,6 @@ static void generate_eye (void);
 /* Initializes static allocated pauli operators */
 void _pauli_ops_init_ (void)
 {
-  
   generate_x ();
   generate_z ();
   generate_eye ();

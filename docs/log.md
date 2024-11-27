@@ -25,20 +25,24 @@ Next:
 
 - I was working on Steeb and Hardy, and I started to formalize how one can derive a unitary operator given an operator specification. Specifically, I was trying an example of deriving U_not given the NOT operation. I need to finish number 4.
 
-Crux: Deriving a matrix representation is easy given we have the unitary operator representation.
+Crux: Deriving a matrix representation is easy given we have the unitary operator representation. The hard part is transitioning from input to output in the following
 
-**Input:** Not operator description:
+**Input:** NOT operator description:
 
 $$
-NOT (\ket\psi) = 
+NOT (\ket{\psi}) = 
 \begin{cases}
-\ket0 \mapsto \ket1 \\
-\ket1 \mapsto \ket0 \\
+\ket{0} \mapsto \ket{1} \\
+\ket{1} \mapsto \ket{0} \\
 \end{cases}
 $$
 
-**Output:** Unitary operator of Not 
+**Output:** Unitary operator of NOT
 
 $$
-U = \ket0\bra1 + \ket1\bra0
+U = \ket{0}\bra{1} + \ket{1}\bra{0}
+$$
+
+$$
+\{Q: \ket{\psi} = \ket{\psi}\}
 $$
