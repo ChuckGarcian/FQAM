@@ -1,6 +1,6 @@
 
 /*Life Cycle*/
-FQAM_Error FQAM_Operator_create (FQAM_Op *operator, char *name);
+FQAM_Error FQAM_Operator_init (FQAM_Op *operator, char *name);
 FQAM_Error FQAM_operator_free (FQAM_Op *operator);
 
 /* Operator Generation Functions */

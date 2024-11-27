@@ -9,9 +9,10 @@
 #include "FQAM.h"
 #include <string.h>
 
-#define TMP_DATA_TYPE FLA_INT
+#define TMP_DATA_TYPE FLA_DOUBLE_COMPLEX
 
 #define incr_addr(i, j) ((i * rs) + (j * cs)) // Address incremental
+#define access(i, j) (buf + (i * rs) + (j * cs)) // Address incremental
 
 int test_dim = 2;
 FQAM_Op x_op;
@@ -49,20 +50,25 @@ static void generate_x (void)
   char name[] = "not \0";
   
   // Initialize operator and set FLA matrix
-  FQAM_Operator_create (&x_op, name);  
+  FQAM_Operator_init (&x_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &x_op.mat_repr);
 
   // Get buffer address
-  int *buf = FLA_Obj_buffer_at_view (x_op.mat_repr);
+  dcomplex *buf = FLA_Obj_buffer_at_view (x_op.mat_repr);
 
   // Access's array elements and set to proper values
   rs = FLA_Obj_row_stride (x_op.mat_repr);
   cs = FLA_Obj_col_stride (x_op.mat_repr);
 
-  *(buf + incr_addr (0, 0)) = 0; // Set X[0,0] = 0
-  *(buf + incr_addr (1, 1)) = 0; // Set X[1,1] = 0
-  *(buf + incr_addr (0, 1)) = 1; // Set X[0,1] = 1
-  *(buf + incr_addr (1, 0)) = 1; // Set X[1,0] = 1
+  access (0, 0)->real = 0.0;
+  access (1, 1)->real = 0.0;
+  access (0, 1)->real = 1.0;
+  access (1, 0)->real = 1.0;
+  
+  access (0, 0)->imag = 0.0;
+  access (1, 1)->imag = 0.0;
+  access (0, 1)->imag = 0.0;
+  access (1, 0)->imag = 0.0;
 }
 
 static void generate_z (void)
@@ -71,28 +77,59 @@ static void generate_z (void)
 
   char name[] = "Invert \0";
   
-  FQAM_Operator_create (&z_op, name);  
+  FQAM_Operator_init (&z_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &z_op.mat_repr);
 
   // Get buffer address
-  int *buf = FLA_Obj_buffer_at_view (z_op.mat_repr);
+  dcomplex *buf = FLA_Obj_buffer_at_view (z_op.mat_repr);
 
   // Access's array elements and set to proper values
   rs = FLA_Obj_row_stride (z_op.mat_repr);
   cs = FLA_Obj_col_stride (z_op.mat_repr);
 
-  *(buf + incr_addr (0, 0)) = 1;  // Set X[0,0] = 0
-  *(buf + incr_addr (1, 1)) = -1; // Set X[1,1] = 0
-  *(buf + incr_addr (0, 1)) = 0;  // Set X[0,1] = 1
-  *(buf + incr_addr (1, 0)) = 0;  // Set X[1,0] = 1
-};
+  access (0, 0)->real = 0.0;
+  access (1, 1)->real = -1.0;
+  access (0, 1)->real = 0.0;
+  access (1, 0)->real = 0.0;
+  
+  access (0, 0)->imag = 0.0;
+  access (1, 1)->imag = 0.0;
+  access (0, 1)->imag = 0.0;
+  access (1, 0)->imag = 0.0;
+}
 
 static void generate_eye (void)
 {
   char name[] = "Identity \0";
-  FQAM_Operator_create (&eye_op, name);  
+  FQAM_Operator_init (&eye_op, name);  
   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &eye_op.mat_repr);
   FLA_Set_to_identity (eye_op.mat_repr);
 }
 
-static void generate_y (void) { FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &y_op); }
+static void generate_y (void) 
+{ 
+  int rs, cs;
+  char name[] = "Y gate \0";
+  
+  // Initialize operator and set FLA matrix
+  FQAM_Operator_init (&y_op, name);  
+  FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &y_op.mat_repr);
+
+  // Get buffer address
+  dcomplex *buf = FLA_Obj_buffer_at_view (y_op.mat_repr);
+
+  // Access's array elements and set to proper values
+  rs = FLA_Obj_row_stride (y_op.mat_repr);
+  cs = FLA_Obj_col_stride (y_op.mat_repr);
+
+  access (0, 0)->real = 0.0;
+  access (1, 1)->real = 0.0;
+  access (0, 1)->real = 1.0;
+  access (1, 0)->real = 1.0;
+  
+  access (0, 0)->imag = 0.0;
+  access (1, 1)->imag = 1.0;
+  access (0, 1)->imag = 1.0;
+  access (1, 0)->imag = 0.0;
+}
+

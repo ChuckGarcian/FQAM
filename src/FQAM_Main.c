@@ -123,8 +123,22 @@ bool FQAM_initialized (void)
 }
 
 /* Applys operator to state vector */
-void apply_operator (FQAM_Op *op)
+void apply_operator(FQAM_Op *op)
 {
+    FLA_Obj A, x, y_tmp;
+
+    A = op->mat_repr;
+    x = main_stage.statevector;
+    FLA_Obj_create_conf_to(FLA_NO_TRANSPOSE, x, &y_tmp); // Temp
+
+    /* y = A * x */
+    FLA_Gemv(FLA_NO_TRANSPOSE, FLA_ONE, A, x, FLA_ZERO, y_tmp);
+
+    // Copy y_tmp back to x 
+    FLA_Copy(y_tmp, x);
+
+    // Free the temporary object 
+    FLA_Obj_free(&y_tmp);
 }
 
 void FQAM_compute_outcomes (void)

@@ -18,7 +18,7 @@ int dim_m = 2;
 int dim_n = 2;
 
 // Initialize an operator 
-FQAM_Error FQAM_Operator_create (FQAM_Op *operator, char *name)
+FQAM_Error FQAM_Operator_init (FQAM_Op *operator, char *name)
 {
   assertf (FQAM_initialized (), "Error: Stage must be initialized to create operator");
 
@@ -74,7 +74,8 @@ FQAM_Error FQAM_Operator_create (FQAM_Op *operator, char *name)
 void FQAM_Operator_show (FQAM_Op *operator)
 {
   printf ("Operator: %s", operator->name);
-  FLA_Obj_show ("", operator->mat_repr, "%d", "");  
+
+  FLA_Obj_show ("", operator->mat_repr, "%11.3e", "");  
 }
 
 /* Free operators resources and marks as uninitialized.

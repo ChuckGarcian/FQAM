@@ -18,6 +18,7 @@ static int test_dim = 1;
 void test_1 (void);
 void test_2 (void);
 void test_3 (void);
+void test_4 (void);
 
 int main (void)
 {
@@ -65,13 +66,15 @@ void test_4 (void)
 {
   printf ("Running Test 4 \n");  
   FQAM_init (test_dim, 0);  
-  
+  FQAM_show_statevector (); 
+
   FQAM_Pauli_x ();
   FQAM_Pauli_z ();
   FQAM_Pauli_eye ();
   
   _debug_FQAM_show_stage ();  
   FQAM_compute_outcomes ();
+  FQAM_show_statevector (); 
   FQAM_finalize ();  
   printf ("Passed Test 4 \n \n");
 }
