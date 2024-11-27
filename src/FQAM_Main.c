@@ -16,7 +16,7 @@
 static bool _FQAM_initialized = false;
 
 // Stage Struct
-struct stage {
+static struct stage {
   double _Complex *statevector; // Quantum statevector 
   size_t dim;                   // Dimension of hilbertspace
   arraylist *stage;             // Contain sequence applied computation steps
