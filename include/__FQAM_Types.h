@@ -11,4 +11,4 @@ typedef struct
   int dimension;     // Hilbert Dimension 
   int mat_repr_initialized;
   int initialized; 
-} FQAM_Op;
+} FQAM_Op;  

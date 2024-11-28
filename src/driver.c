@@ -19,13 +19,18 @@ void test_1 (void);
 void test_2 (void);
 void test_3 (void);
 void test_4 (void);
+void test_render_1 (void);
 
 int main (void)
 {
-  test_1();
-  test_2();
-  test_3();  
-  test_4();  
+  printf ("Hello world! \n");
+  FQAM_show_diagram ();
+  // test_render_1 ();
+  
+  // test_1();
+  // test_2();
+  // test_3();  
+  // test_4();  
 }
 
 void test_1 (void)
@@ -77,4 +82,9 @@ void test_4 (void)
   FQAM_show_statevector (); 
   FQAM_finalize ();  
   printf ("Passed Test 4 \n \n");
+}
+
+void test_render_1 (void)
+{
+  FQAM_Error FQAM_show_diagram (void);
 }

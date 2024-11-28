@@ -46,3 +46,7 @@ $$
 $$
 \{Q: \ket{\psi} = \ket{\psi}\}
 $$
+
+## 11.28.24 Thursday
+
+- Get visual working

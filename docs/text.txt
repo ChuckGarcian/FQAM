@@ -14,7 +14,7 @@ FQAM_Basis FQAM_Basis_state (int eigenstate, double angle);
 FQAM_Basis_standard ();
 
 // Example of creating a not using NOT
-void FQAM_not ()
+void example_not ()
 {
   FQAM_op ket0;
   FQAM_op ket1;
@@ -36,9 +36,59 @@ void FQAM_not ()
   FQAM_Op_add (1, outer2, res);
 }
 
-
-void example_initialization (void)
+// Example of creating a not using NOT
+void example_identity ()
 {
+  FQAM_op ket0;
+  FQAM_op ket1;
+  FQAM_op outer1, outer 2;
+  FQAM_op res;
+  
+  FQAM_Op_create (op);
+  
+  ket0 = FQAM_Basis_standard (0);
+  ket1 = FQAM_Basis_standard (1);
+  
+  // |0><0|
+  FQAM_Op_outer (ket0, ket0, outer);
 
-  set_initial_state ();
+  // |1><1|
+  FQAM_Op_outer (ket1, ket1, outer2);
+
+  FQAM_Op_add (1, outer1, res);
+  FQAM_Op_add (1, outer2, res);
+}
+
+
+void example_CNOT (void)
+{
+  FQAM_op ket00;
+  FQAM_op ket11;
+  FQAM_op outer1, outer 2;
+  FQAM_op res; 
+
+  x10xX = |001
+  
+  00 = FQAM_Op_outer (ket0, ket0)
+  01 = FQAM_Op_outer (ket0, ket0)
+    
+  01I = 
+  10X = 
+  11X = 
+  
+  FQAM_Op_add (1, outer00, res);
+  FQAM_Op_add (1, outer11, res);
+}
+
+void example_phase_not (void)
+{
+  |0><0|0><I|I
+}
+
+void example_root_not (void)
+{
+  |0><0| 
+  
+  FQAM_Op_add (1, , res);
+  FQAM_Op_add (1, outer11, res); 
 }
