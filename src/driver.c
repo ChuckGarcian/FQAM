@@ -19,18 +19,19 @@ void test_1 (void);
 void test_2 (void);
 void test_3 (void);
 void test_4 (void);
+void test_5 (void);
+
 void test_render_1 (void);
 
 int main (void)
-{
-  printf ("Hello world! \n");
-  FQAM_show_diagram ();
-  // test_render_1 ();
-  
+{  
   // test_1();
   // test_2();
   // test_3();  
   // test_4();  
+  // test_5 ();
+  
+  test_render_1 ();
 }
 
 void test_1 (void)
@@ -84,7 +85,22 @@ void test_4 (void)
   printf ("Passed Test 4 \n \n");
 }
 
+void test_5 (void)
+{
+  printf ("Running Test 5 \n");  
+  FQAM_init (test_dim, 0);  
+  FQAM_show_statevector (); 
+  FQAM_compute_outcomes (); // Expected to not crash
+  FQAM_finalize ();  
+  printf ("Passed Test 5 \n \n");
+}
+
 void test_render_1 (void)
 {
+  printf ("Running Render Test 1 \n");  
+  FQAM_init (test_dim, 0);  
+  FQAM_Pauli_x ();
+  FQAM_show_diagram ();
   FQAM_Error FQAM_show_diagram (void);
+  printf ("Passed Render Test 1 \n");  
 }

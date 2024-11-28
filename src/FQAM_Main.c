@@ -191,3 +191,125 @@ void _debug_show_state_data (void)
     printf("row stride (rs): %ld\n", rs);
     printf("col stride (cs): %ld\n", cs);
 }
+
+/*
+    Copyright (C) 2024, Chuck Garcia
+
+    This file is part of libfqam and is available under the 3-Clause
+    BSD license, which can be found in the LICENSE file at the top-level
+    directory, or at http://opensource.org/licenses/BSD-3-Clause
+
+*/
+
+#include "FQAM_Rendering.h"
+#include "assertf.h"
+#include "raylib.h"
+#include <stdio.h>
+
+#include "raylib.h"
+
+#define RECS_WIDTH 25
+#define RECS_HEIGHT 25
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+
+// #define MAX_RECS_X 4
+// #define MAX_RECS_Y 2
+
+#define PLAY_TIME_IN_FRAMES 240 // At 60 fps = 4 seconds
+
+/* Stage Layer struct for rendering */
+struct Stage_Layer {  
+  Rectangle *recs; 
+  Color color;
+} layer_recs;
+
+void init_grid (struct Stage_Layer *layer_recs, int max_recs_x, int max_recs_y);
+void color_grid (struct Stage_Layer *layer_recs, int layer_idx);
+
+FQAM_Error FQAM_show_diagram (void)
+{
+  assertf (FQAM_initialized (), "Error: Expected core initialized");
+  
+  const int screenWidth = SCREEN_WIDTH;
+  const int screenHeight = SCREEN_HEIGHT;
+
+  int max_recs_x = main_stage.stage->size + 1;
+  int max_recs_y = main_stage.state_size;
+  
+  struct Stage_Layer layers = {0};
+  layers.recs = (Rectangle *) calloc (sizeof (Rectangle), max_recs_x * max_recs_y);
+  layers.color = BLUE; // Initial Color
+
+  InitWindow (screenWidth, screenHeight,
+              "raylib [shapes] example - easings rectangle array");
+  printf ("Max_recs_x: %d \n", max_recs_x);
+  printf ("Max_recs_y: %d \n", max_recs_y);    
+  init_grid (&layers, max_recs_x, max_recs_y);
+
+  float rotation = 0.0f;
+  int framesCounter = 0;
+
+  SetTargetFPS (60);
+  int idx = 0;
+    
+
+  while (!WindowShouldClose ())
+  {
+    
+    // if (idx < main_stage.stage->size)
+    // {
+    //   FQAM_Op *operator = arraylist_get (main_stage.stage, idx);
+    //   apply_operator (operator);
+    //   color_grid (&layer_recs, idx);
+    // }
+    
+    BeginDrawing ();
+    ClearBackground (RAYWHITE);
+
+    
+    for (int i = 0; i < max_recs_x * max_recs_y; i++)
+    {
+      DrawRectanglePro (layers.recs[i], (Vector2){layers.recs[i].width, layers.recs[i].height}, rotation,
+                        layers.color);
+    }
+
+    EndDrawing ();
+  }
+
+  CloseWindow ();
+
+  return 0;
+}
+
+void init_grid (struct Stage_Layer *layer_recs, int max_recs_x, int max_recs_y)
+{
+  float spacingX = (SCREEN_WIDTH - (max_recs_x * RECS_WIDTH)) / max_recs_x;
+  float spacingY = (SCREEN_HEIGHT - (max_recs_y * RECS_HEIGHT)) / max_recs_y;
+
+  assertf (spacingX > 0, "Error: Unhandled negative spacing error");
+  assertf (spacingY > 0, "Error: Unhandled negative spacing error");
+
+  for (int y = 0; y < max_recs_y; y++)
+  {
+    for (int x = 0; x < max_recs_x; x++)
+    {
+      layer_recs->recs[y * max_recs_x + x].x = ((RECS_WIDTH + spacingX) * x) + RECS_WIDTH * 2;
+      layer_recs->recs[y * max_recs_x + x].y = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
+      layer_recs->recs[y * max_recs_x + x].width = RECS_WIDTH;
+      layer_recs->recs[y * max_recs_x + x].height = RECS_HEIGHT;
+    }
+  }
+}
+
+// void color_grid (struct Stage_Layer *layer_recs, int layer_idx)
+// {
+//   for (int y = 0; y < MAX_RECS_Y; y++) 
+//   {
+//     layer_recs->recs[y * MAX_RECS_X + layer_idx].x = ((RECS_WIDTH + spacingX) * x) + RECS_WIDTH * 2;
+//     layer_recs->recs[y * MAX_RECS_X + layer_idx].y = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
+//     layer_recs->recs[y * MAX_RECS_X + layer_idx].width = RECS_WIDTH;
+//     layer_recs->recs[y * MAX_RECS_X + layer_idx].height = RECS_HEIGHT;    
+//   }
+// }

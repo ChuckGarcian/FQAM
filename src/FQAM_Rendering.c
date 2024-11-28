@@ -40,13 +40,13 @@ FQAM_Error FQAM_show_diagram_one (void)
 #define SCREEN_HEIGHT 450
 
 #define MAX_RECS_X 4
-#define MAX_RECS_Y 7
+#define MAX_RECS_Y 2
 
 #define PLAY_TIME_IN_FRAMES 240 // At 60 fps = 4 seconds
 
-void init_grid (Rectangle *recs);
+// void init_grid (Rectangle *recs);
 
-FQAM_Error FQAM_show_diagram (void)
+FQAM_Error FQAM_show_diagram_two(void)
 {
 
   const int screenWidth = SCREEN_WIDTH;
@@ -84,22 +84,22 @@ FQAM_Error FQAM_show_diagram (void)
   return 0;
 }
 
-void init_grid (Rectangle *recs)
-{
-  float spacingX = (SCREEN_WIDTH - (MAX_RECS_X * RECS_WIDTH)) / MAX_RECS_X;
-  float spacingY = (SCREEN_HEIGHT - (MAX_RECS_Y * RECS_HEIGHT)) / MAX_RECS_Y;
+// void init_grid (Rectangle *recs)
+// {
+//   float spacingX = (SCREEN_WIDTH - (MAX_RECS_X * RECS_WIDTH)) / MAX_RECS_X;
+//   float spacingY = (SCREEN_HEIGHT - (MAX_RECS_Y * RECS_HEIGHT)) / MAX_RECS_Y;
 
-  assertf (spacingX > 0, "Error: Unhandled negative spacing error");
-  assertf (spacingY > 0, "Error: Unhandled negative spacing error");
+//   assertf (spacingX > 0, "Error: Unhandled negative spacing error");
+//   assertf (spacingY > 0, "Error: Unhandled negative spacing error");
 
-  for (int y = 0; y < MAX_RECS_Y; y++)
-  {
-    for (int x = 0; x < MAX_RECS_X; x++)
-    {
-      recs[y * MAX_RECS_X + x].x = ((RECS_WIDTH + spacingX) * x) + RECS_WIDTH * 2;
-      recs[y * MAX_RECS_X + x].y = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
-      recs[y * MAX_RECS_X + x].width = RECS_WIDTH;
-      recs[y * MAX_RECS_X + x].height = RECS_HEIGHT;
-    }
-  }
-}
+//   for (int y = 0; y < MAX_RECS_Y; y++)
+//   {
+//     for (int x = 0; x < MAX_RECS_X; x++)
+//     {
+//       recs[y * MAX_RECS_X + x].x = ((RECS_WIDTH + spacingX) * x) + RECS_WIDTH * 2;
+//       recs[y * MAX_RECS_X + x].y = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
+//       recs[y * MAX_RECS_X + x].width = RECS_WIDTH;
+//       recs[y * MAX_RECS_X + x].height = RECS_HEIGHT;
+//     }
+//   }
+// }
