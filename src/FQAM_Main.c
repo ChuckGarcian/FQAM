@@ -216,6 +216,7 @@ int gen_path_probility_matrix ( FLA_Obj A, FLA_Obj bt, FLA_Obj C );
 
 void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y);
 void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spacing_x, const int spacing_y);
+Color get_color_from_complex_amplitude (FLA_Obj amplitude);
 
 FQAM_Error FQAM_show_diagram (void)
 {  
@@ -230,6 +231,9 @@ FQAM_Error FQAM_show_diagram (void)
   screenWidth  = SCREEN_WIDTH;
   screenHeight = SCREEN_HEIGHT;
   
+  assertf (spacingX > 0, "Error: Unhandled negative spacing error");
+  assertf (spacingY > 0, "Error: Unhandled negative spacing error");
+
   dim_t input_states, output_states;    
   Image result_image;
 
@@ -254,12 +258,14 @@ FQAM_Error FQAM_show_diagram (void)
     state = main_stage.statevector;
     
     if (time_step) // Fence post
+    {
       gen_path_probility_matrix (operator, state, adjacency_matrix);
-    apply_operator (operator);
+      draw_transition_lines     (&result_image, adjacency_matrix, time_step, spacing_x, spacing_y);            
+    }
     
     // Draw next state and adjacency matrix
+    apply_operator (operator);
     draw_next_state (&result_image, state, time_step, spacing_x, spacing_y);
-    draw_transition_lines     (&result_image, adjacency_matrix, time_step, spacing_x, spacing_y);            
   }  
 
   ExportImage (result_image, "saved_image.png");
@@ -336,46 +342,41 @@ int gen_path_probility_matrix ( FLA_Obj A, FLA_Obj bt, FLA_Obj C )
   return FLA_SUCCESS;
 }
 
-void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y)
+void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spacing_x, const int spacing_y)
 {
-  int max_recs_x, max_recs_y;
-  int length, width;
+  assertf (FLA_Obj_is_vector (state), "Error: Expected statevector to be vector");
   
-  max_recs_x = FLA_Obj_length (adjacency_matrix);
+
+  FLA_Obj bt = state;
+  FLA_Obj bLt, bRt, b0t,  beta1,  b2t;
+  FLA_Part_1x2 (bt, &bLt, &bRt, 0, FLA_LEFT );
   
-  length = FLA_Obj_length (adjacency_matrix);
-  width  = FLA_Obj_width (adjacency_matrix);
+  float rotation;
+  int beta_index;
+
+  rotation = 0.0f;
+  beta_index = 0;
   
-  // float spacingX = (SCREEN_WIDTH - (max_recs_x * RECS_WIDTH)) / max_recs_x;
-  float spacingY = (SCREEN_HEIGHT - (max_recs_y * RECS_HEIGHT)) / max_recs_y;
-
-  // assertf (spacingX > 0, "Error: Unhandled negative spacing error");
-  // assertf (spacingY > 0, "Error: Unhandled negative spacing error");
-
-  BeginDrawing ();
-
-
-  for (int x = 0; x < length; x++)
+  // Draw all state with associated amplitudes 
+  while (FLA_Obj_width (bLt) < FLA_Obj_width(bt))  
   {
-    layer_recs->recs[y * max_recs_x + x].x = ((RECS_WIDTH + spacing_x) * x) + RECS_WIDTH * 2;
-    layer_recs->recs[y * max_recs_x + x].y = ((RECS_HEIGHT + spacing_y) * y) + RECS_HEIGHT * 2;
-    layer_recs->recs[y * max_recs_x + x].width = RECS_WIDTH;
-    layer_recs->recs[y * max_recs_x + x].height = RECS_HEIGHT;
+    FLA_Repart_1x2_to_1x3( bLt, bRt, &b0t, &beta1, &b2t, 1, FLA_RIGHT );
     
-    if (main_stage.stage)
-      layer_recs->color = GRAY
+    // Create rectangle 
+    Rectangle rec;
+    rec.x = ((RECS_WIDTH + spacing_x) * time_step) + RECS_WIDTH * 2;
+    rec.y = ((RECS_HEIGHT + spacing_y) * beta_index) + RECS_HEIGHT * 2;
+    rec.width = RECS_WIDTH;
+    rec.height = RECS_HEIGHT;    
+    Color color = get_color_from_complex_amplitude (beta1);
+    DrawRectanglePro (rec, (Vector2){rec.width / 2, rec.height / 2}, rotation, color);
+    
+    FLA_Cont_with_1x3_to_1x2( &bLt, &bRt, b0t, beta1, b2t, FLA_LEFT );
+    beta_index++;
   }
-  }    
-  
-  for (int i = 0; i < max_recs_x * max_recs_y; i++)
-  {
-    DrawRectanglePro (layers.recs[i], (Vector2){layers.recs[i].width, layers.recs[i].height}, rotation,
-                      layers.color);
-  }
-
 }
 
-void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spacing_x, const int spacing_y)
+void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y)
 {
   
   int width  = FLA_Obj_width (state)    
@@ -396,14 +397,8 @@ void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spac
     }
 }    
 
+/* Returns raylib color from a FLA complex amplitude*/
+Color get_color_from_complex_amplitude (FLA_Obj amplitude)
+{
 
-// void color_grid (struct Stage_Layer *layer_recs, int layer_idx, )
-// {
-//   for (int y = 0; y < MAX_RECS_Y; y++) 
-//   {
-//     layer_recs->recs[y * MAX_RECS_X + layer_idx].x = ((RECS_WIDTH + spacingX) * x) + RECS_WIDTH * 2;
-//     layer_recs->recs[y * MAX_RECS_X + layer_idx].y = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
-//     layer_recs->recs[y * MAX_RECS_X + layer_idx].width = RECS_WIDTH;
-//     layer_recs->recs[y * MAX_RECS_X + layer_idx].height = RECS_HEIGHT;    
-//   }
-// }
+}
