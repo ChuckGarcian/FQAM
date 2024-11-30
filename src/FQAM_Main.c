@@ -16,7 +16,7 @@
 static bool _FQAM_initialized = false;
 
 /* Stage Struct */
-static struct stage {
+struct stage {
   FLA_Obj statevector;   // Quantum statevector 
   size_t dim;            // Dimension of hilbertspace
   size_t state_space;     // Statevector size
@@ -190,215 +190,41 @@ void _debug_show_state_data (void)
     printf("col stride (cs): %ld\n", cs);
 }
 
-/*
-    Copyright (C) 2024, Chuck Garcia
+void _debug_show_fla_meta_data (FLA_Obj A)
+{
+    int datatype;
+    dim_t        i, j, m, n;
+    dim_t        rs, cs;
 
-    This file is part of libfqam and is available under the 3-Clause
-    BSD license, which can be found in the LICENSE file at the top-level
-    directory, or at http://opensource.org/licenses/BSD-3-Clause
-
-*/
-
-#include "FQAM_Rendering.h"
-#include "assertf.h"
-#include "raylib.h"
-#include <stdio.h>
-
-#include "raylib.h"
-
-#define RECS_WIDTH 25
-#define RECS_HEIGHT 25
-
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
-
-int gen_path_probility_matrix ( FLA_Obj A, FLA_Obj bt, FLA_Obj C );
-
-void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y);
-void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spacing_x, const int spacing_y);
-Color get_color_from_complex_amplitude (FLA_Obj amplitude);
-
-FQAM_Error FQAM_show_diagram (void)
-{  
-  assertf (FQAM_initialized (), "Error: Expected core initialized");
-  
-  int screenWidth, screenHeight; 
-  const int spacing_x, spacing_y;
-  float rotation;
-  
-  FLA_Obj adjacency_matrix;  
-
-  screenWidth  = SCREEN_WIDTH;
-  screenHeight = SCREEN_HEIGHT;
-  
-  assertf (spacingX > 0, "Error: Unhandled negative spacing error");
-  assertf (spacingY > 0, "Error: Unhandled negative spacing error");
-
-  dim_t input_states, output_states;    
-  Image result_image;
-
-  // Create result image object
-  result_image = GenImageColor (screenWidth, screenHeight, RED);    
     
-  // Input states are rows and columns outputs
-  input_states = main_stage.state_space;
-  output_states = main_stage.state_space;
-  
-  // Create adjacency matrix buffer and set to zeros
-  FLA_Obj_create (FLA_DOUBLE_COMPLEX, input_states, output_states, 0, 0, &adjacency_matrix);
-  FLA_set (FLA_ZERO, adjacency_matrix);
-
-  // Compute and draw transition probabilities 
-  for (int time_step = 0; time_step < main_stage.stage->size; )
-  {    
-    FLA_Obj operator, state, adjacency_matrix;
+    datatype = FLA_Obj_datatype(A);
+    m        = FLA_Obj_length(A);
+    n        = FLA_Obj_width(A);
+    rs       = FLA_Obj_row_stride(A);
+    cs       = FLA_Obj_col_stride(A);
     
-    // Compute next state and adjacency matrix
-    operator = ((FQAM_Op *) arraylist_get (main_stage.stage, time_step))->mat_repr;
-    state = main_stage.statevector;
-    
-    if (time_step) // Fence post
-    {
-      gen_path_probility_matrix (operator, state, adjacency_matrix);
-      draw_transition_lines     (&result_image, adjacency_matrix, time_step, spacing_x, spacing_y);            
-    }
-    
-    // Draw next state and adjacency matrix
-    apply_operator (operator);
-    draw_next_state (&result_image, state, time_step, spacing_x, spacing_y);
-  }  
-
-  ExportImage (result_image, "saved_image.png");
-  UnloadImage (result_image);
-  return 0;
+    printf("\ndatatype: %d\n", datatype);
+    printf("length (m): %d\n", m);
+    printf("width (n): %d\n", n);
+    printf("row stride (rs): %ld\n", rs);
+    printf("col stride (cs): %ld\n", cs);
 }
 
-/* Copyright 2024 The University of Texas at Austin  
- 
-   For licensing information see
-                  http://www.cs.utexas.edu/users/flame/license.html 
-
-   Programmed by: Name of author
-                  Email of author
-                                                                     */
-
-/*
-Arguments:
-  FLA_Obj A: Operator Matrix
-  FLA_Obj bt: current state vector as row vector
-    FLA_Obj C: Path probability adjacency matrix. Matrix specifying the probability
-     amplitudes of edges connecting the i-th and (i + 1)-th state.
-*/
-int gen_path_probility_matrix ( FLA_Obj A, FLA_Obj bt, FLA_Obj C )
-{
-  FLA_Obj AL,    AR,       A0,  a1,  A2;
-
-  FLA_Obj bLt,    bRt,       b0t,  beta1,  b2t;
-
-  FLA_Obj CT,              C0,
-          CB,              c1t,
-                           C2;
-
-  FLA_Part_1x2( A,    &AL,  &AR,      0, FLA_LEFT );
-
-  FLA_Part_1x2( bt,    &bLt,  &bRt,      0, FLA_LEFT );
-
-  FLA_Part_2x1( C,    &CT, 
-                      &CB,            0, FLA_TOP );
-
-  while ( FLA_Obj_width( AL ) < FLA_Obj_width( A ) ){
-
-    FLA_Repart_1x2_to_1x3( AL,  /**/ AR,        &A0, /**/ &a1, &A2,
-                           1, FLA_RIGHT );
-
-    FLA_Repart_1x2_to_1x3( bLt,  /**/ bRt,        &b0t, /**/ &beta1, &b2t,
-                           1, FLA_RIGHT );
-
-    FLA_Repart_2x1_to_3x1( CT,                &C0, 
-                        /* ** */            /* *** */
-                                              &c1t, 
-                           CB,                &C2,        1, FLA_BOTTOM );
-
-
-    // Update 
-    print ("c1t Length: %d", FLA_Obj_length (c1t));
-    print ("c1t Width: %d", FLA_Obj_width (c1t));
-    // FLA_Axpy (FLA_TRANSPOSE, beta1, a1, c1t);
+// void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y)
+// {
     
-
-    FLA_Cont_with_1x3_to_1x2( &AL,  /**/ &AR,        A0, a1, /**/ A2,
-                              FLA_LEFT );
-
-    FLA_Cont_with_1x3_to_1x2( &bLt,  /**/ &bRt,        b0t, beta1, /**/ b2t,
-                              FLA_LEFT );
-
-    FLA_Cont_with_3x1_to_2x1( &CT,                C0, 
-                                                  c1t, 
-                            /* ** */           /* *** */
-                              &CB,                C2,     FLA_TOP );
-
-  }
-
-  return FLA_SUCCESS;
-}
-
-void draw_next_state (Image *image, FLA_Obj state, int time_step, const int spacing_x, const int spacing_y)
-{
-  assertf (FLA_Obj_is_vector (state), "Error: Expected statevector to be vector");
-  
-
-  FLA_Obj bt = state;
-  FLA_Obj bLt, bRt, b0t,  beta1,  b2t;
-  FLA_Part_1x2 (bt, &bLt, &bRt, 0, FLA_LEFT );
-  
-  float rotation;
-  int beta_index;
-
-  rotation = 0.0f;
-  beta_index = 0;
-  
-  // Draw all state with associated amplitudes 
-  while (FLA_Obj_width (bLt) < FLA_Obj_width(bt))  
-  {
-    FLA_Repart_1x2_to_1x3( bLt, bRt, &b0t, &beta1, &b2t, 1, FLA_RIGHT );
+//   // Render each basis state 
+//   for (int y = 0; y < width; y++)
+//   {
+//     Rectangle rec;
     
-    // Create rectangle 
-    Rectangle rec;
-    rec.x = ((RECS_WIDTH + spacing_x) * time_step) + RECS_WIDTH * 2;
-    rec.y = ((RECS_HEIGHT + spacing_y) * beta_index) + RECS_HEIGHT * 2;
-    rec.width = RECS_WIDTH;
-    rec.height = RECS_HEIGHT;    
-    Color color = get_color_from_complex_amplitude (beta1);
-    DrawRectanglePro (rec, (Vector2){rec.width / 2, rec.height / 2}, rotation, color);
+//     rec.x      = ((RECS_WIDTH + spacingX) * time_step) + RECS_WIDTH * 2;
+//     rec.y      = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
+//     rec.width  = RECS_WIDTH;
+//     rec.height = RECS_HEIGHT;    
     
-    FLA_Cont_with_1x3_to_1x2( &bLt, &bRt, b0t, beta1, b2t, FLA_LEFT );
-    beta_index++;
-  }
-}
-
-void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y)
-{
-  
-  int width  = FLA_Obj_width (state)    
-  
-  // Render each basis state 
-  for (int y = 0; y < width; y++)
-  {
-    Rectangle rec;
+//     Color color = RED;    
     
-    rec.x      = ((RECS_WIDTH + spacingX) * time_step) + RECS_WIDTH * 2;
-    rec.y      = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
-    rec.width  = RECS_WIDTH;
-    rec.height = RECS_HEIGHT;    
-    
-    Color color = RED;    
-    
-    DrawRectanglePro (rec, (Vector2){rec.width, rec.height}, rotation, color);
-    }
-}    
-
-/* Returns raylib color from a FLA complex amplitude*/
-Color get_color_from_complex_amplitude (FLA_Obj amplitude)
-{
-
-}
+//     DrawRectanglePro (rec, (Vector2){rec.width, rec.height}, rotation, color);
+//     }
+// }    

@@ -13,7 +13,7 @@
 #define ASSERTF_DEF_ONCE
 #include "assertf.h"
 
-static int test_dim = 1;
+static int test_dim = 2;
 
 void test_1 (void);
 void test_2 (void);
@@ -99,8 +99,9 @@ void test_render_1 (void)
 {
   printf ("Running Render Test 1 \n");  
   FQAM_init (test_dim, 0);  
-  FQAM_Pauli_x ();
-  FQAM_show_diagram ();
-  FQAM_Error FQAM_show_diagram (void);
+  FQAM_show_statevector (); 
+  // FQAM_Pauli_x ();
+  _debug_FQAM_show_stage ();  
+  FQAM_Render_feynman_diagram ();
   printf ("Passed Render Test 1 \n");  
 }
