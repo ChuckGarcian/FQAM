@@ -12,3 +12,8 @@ void _debug_FQAM_show_stage (void);
 
 /*FQAM States*/
 bool FQAM_initialized (void);
+
+/* Debug commands (TODO: delete) */
+void _debug_FQAM_show_stage (void);
+void _debug_show_fla_meta_data (FLA_Obj A);
+void _debug_show_state_data (void);

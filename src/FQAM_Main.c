@@ -59,9 +59,17 @@ void FQAM_init (size_t dim, unsigned int initial_state)
     FLA_Obj_buffer_at_view (main_stage.statevector);
 
     // TODO: Add way to pass if built in operators should be initialized
-    pauli_ops_init_ (); 
+    // pauli_ops_init_ (); 
     printf ("FQAM: Initialized\n");
+    
 }
+
+typedef int Local;
+
+void FQAM_Part_as_lattice (Local neigh)
+{
+  // 
+};
 
 /*
 Free resources in FQAM. Includes all FQAM modules.
@@ -195,6 +203,7 @@ void _debug_show_fla_meta_data (FLA_Obj A)
     int datatype;
     dim_t        i, j, m, n;
     dim_t        rs, cs;
+    bool is_vector, is_scalar;
 
     
     datatype = FLA_Obj_datatype(A);
@@ -202,29 +211,16 @@ void _debug_show_fla_meta_data (FLA_Obj A)
     n        = FLA_Obj_width(A);
     rs       = FLA_Obj_row_stride(A);
     cs       = FLA_Obj_col_stride(A);
-    
+    is_vector = FLA_Obj_is_vector(A);
+    is_scalar = FLA_Obj_is_scalar(A);
+
     printf("\ndatatype: %d\n", datatype);
     printf("length (m): %d\n", m);
     printf("width (n): %d\n", n);
     printf("row stride (rs): %ld\n", rs);
     printf("col stride (cs): %ld\n", cs);
-}
+    printf ("vector: %d\n", is_vector);
+    printf ("scalar: %d\n", is_scalar);
 
-// void draw_transition_lines (Image *image, FLA_Obj adjacency_matrix, int time_step, const int spacing_x, const int spacing_y)
-// {
-    
-//   // Render each basis state 
-//   for (int y = 0; y < width; y++)
-//   {
-//     Rectangle rec;
-    
-//     rec.x      = ((RECS_WIDTH + spacingX) * time_step) + RECS_WIDTH * 2;
-//     rec.y      = ((RECS_HEIGHT + spacingY) * y) + RECS_HEIGHT * 2;
-//     rec.width  = RECS_WIDTH;
-//     rec.height = RECS_HEIGHT;    
-    
-//     Color color = RED;    
-    
-//     DrawRectanglePro (rec, (Vector2){rec.width, rec.height}, rotation, color);
-//     }
-// }    
+    FLA_Obj_show ("---Printing FLA Object---", A, "%e", "---Done Printing---");
+}

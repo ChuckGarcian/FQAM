@@ -45,7 +45,11 @@ FQAM_Operator_add (FQAM_op *operator, Complex alpha, FQAM_op *op_term);
 
 **Notes:**
 
-- Semantically equivalent to adding individual terms in a summation outer product decomposition of an operator.
+- Semantically equivalent to adding individual terms in a summation outer product decomposition of an operator:
+
+$$
+U = \sum_{i=1}^n \ket{i}\bra{i}
+$$
 
 Invariant: Every call of this function must satisfy an invariant to ensure valid  unitary operators.
 
@@ -124,9 +128,18 @@ FQAM_Operator_outer_product (FQAM_Op *op, int theta);
 
 The FQAM API need to be universal insofar any unitary operator describing any evolution can be constructed by only the following commands:
 
-FQAM_Basis FQAM_Basis_state (int eigenstate, double angle);
-FQAM_Op_outer (ket0, ket1, outer2);
-FQAM_Op_add (1, outer1, res);
+Public:
+
+    void FQAM_Basis_state   (FQAM_Basis basis, int eigenstate, double angle);    
+    void FQAM_Basis_state_N (FQAM_Basis basis, int eigenstate, double angle, dim_t dim);    
+    void FQAM_Op_outer      (FQAM_Op outer, FQAM_Basis ket0, FQAM_Basis ket1);
+    void FQAM_Op_add        (FQAM_Op outer, Complex alpha, FQAM_Op term);
+    bool FQAM_Op_check      (FQAM_Op op); // Asserts 'boundary conditions' 
+
+    
+Internal:
+    
+    void tensor_product (); // To generate  
 
 ## API Examples
   
@@ -193,21 +206,24 @@ FQAM_Op_add (1, outer1, res);
 
       void example_CNOT (void)
       {
-        FQAM_op ket00;
-        FQAM_op ket11;
-        FQAM_op outer1, outer 2;
-        FQAM_op res; 
+        FQAM_Basis ket0;
+        FQAM_Op ket1;
+        FQAM_Op outer00, outer11;
+        FQAM_Op res; 
 
-        x10xX = |001
+        ket0 = FQAM_Basis_standard (0);
+        ket1 = FQAM_Basis_standard (1);
         
-        00 = FQAM_Op_outer (ket0, ket0)
-        01 = FQAM_Op_outer (ket0, ket0)
-          
-        01I = 
-        10X = 
-        11X = 
+        outer00 = FQAM_Op_outer (ket0, ket0)
+        outer11 = FQAM_Op_outer (ket1, ket1)
         
-        FQAM_Op_add (1, outer00, res);
+        
+        
+        outer00 = FQAM_Op_outer (ket0, ket0)
+        outer11 = FQAM_Op_outer (ket1, ket1)  
+        
+        Op = |0><0|I + |1><1|X 
+        FQAM_Op_add (res, 1, outer00, res);
         FQAM_Op_add (1, outer11, res);
       }
 
@@ -224,6 +240,65 @@ FQAM_Op_add (1, outer1, res);
         FQAM_Op_add (1, outer11, res); 
       }
 
+## Aside: Ensuring closure. Ensuring Norm preservation
+
+How can we ensure 
+
+## Aside: Hierarchical/Recursive creation of operators
+
+Suppose we have a three qubit system $\ket\psi = \ket{000}$. An example of how we can create a new operator $A$ using FQAM_Op_create () called and use the it to generate $B$. 
+
+$$A = \ket0\bra0X\ket{0}\bra{0}$$
+
+$$B = \ket0\bra0\ket{0}\bra{0}A$$
+
+$A$ in this case is an operator that itself hierarchically applies $X$ on the center qubit. We can then create $B$ an operator that hierarchically applies $A$ on the third qubit.
+
+## Aside: Embeding Views
+
+\begin{tikzpicture}
+    % Define the size of the lattice
+    \def\rows{0}
+    \def\cols{8}
+
+    % Draw the lattice points
+    \foreach \x in {0,...,\cols} {
+        \foreach \y in {0,...,\rows} {
+            \fill (\x, \y) circle (2pt);
+        }
+    }
+
+    % Draw the lattice lines
+    \foreach \x in {0,...,\cols} {
+        \draw (\x, 0) -- (\x, \rows);
+    }
+    \foreach \y in {0,...,\rows} {
+        \draw (0, \y) -- (\cols, \y);
+    }
+\end{tikzpicture}
+
+\begin{tikzpicture}
+    % Define the size of the lattice
+    \def\rows{4}
+    \def\cols{4}
+
+    % Draw the lattice points
+    \foreach \x in {0,...,\cols} {
+        \foreach \y in {0,...,\rows} {
+            \fill (\x, \y) circle (2pt);
+        }
+    }
+
+    % Draw the lattice lines
+    \foreach \x in {0,...,\cols} {
+        \draw (\x, 0) -- (\x, \rows);
+    }
+    \foreach \y in {0,...,\rows} {
+        \draw (0, \y) -- (\cols, \y);
+    }
+\end{tikzpicture}
+
+
 ## Aside: Thinking FQAM and it's relation to conservative logic
 
 The issue I am currently thinking about is how formalisms for quantum mechanics can be used formalisms for conservative logic. In general it seems to me that all these different formalism like:
@@ -236,10 +311,12 @@ are all forms of conservative system representation.
 
 This leads me to the following question:
 
-What is a universal conservative logic formalism that lets us easily and efficiently implement the following:
+What is a universal conservative logic formalism that lets us easily and efficiently implement the following: 
 
 - Cellular Automata
 - Apoetic systems
 - QIS applications:
   - Algorithms
   - QEC/Stabilizer circuits
+
+By universal I mean these can be fully be described using tools only from the formalism. In other words: Any arbitrary orchestration of conservative logic wether ,it be quantum or classical, can be described using this formalism.

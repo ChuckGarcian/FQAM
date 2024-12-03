@@ -61,6 +61,9 @@ Transition lines are all
 
 On input of the the operator being applied in the current time step, we want to generate a sort of adjency matrix which contains the probability amplitudes associated with the total probability amplitude of each state in the current
 
+The algorithm below A is the matrix representation of operator A, b is a vector representing the current state vector, and C is the resulting probability adjency matrix.
+
+The each i,j entry of the resulting matrix C is the new total probability that the state is in state i given that operator A was applied on state j
 \input path_prob_algo
 
 \begin{figure}[h]
