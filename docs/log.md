@@ -50,3 +50,7 @@ $$
 ## 11.28.24 Thursday
 
 - Get visual working
+
+## 12.03.24 Tuesday
+
+- Rewrite pauli module such that it uses the new operator subsystem/api

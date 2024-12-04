@@ -18,10 +18,10 @@ void raylib_grid (void)
   {
     for (int x = 0; x < MAX_RECS_X; x++)
     {
-      recs[y * MAX_RECS_X + x].x = RECS_WIDTH / 2.0f + RECS_WIDTH * x;
-      recs[y * MAX_RECS_X + x].y = RECS_HEIGHT / 2.0f + RECS_HEIGHT * y;
-      recs[y * MAX_RECS_X + x].width = RECS_WIDTH;
-      recs[y * MAX_RECS_X + x].height = RECS_HEIGHT;
+      recs[y * MAX_RECS_X + x].x = RECS_SIZE / 2.0f + RECS_SIZE * x;
+      recs[y * MAX_RECS_X + x].y = RECS_SIZE / 2.0f + RECS_SIZE * y;
+      recs[y * MAX_RECS_X + x].width = RECS_SIZE;
+      recs[y * MAX_RECS_X + x].height = RECS_SIZE;
     }
   }
 
@@ -43,8 +43,8 @@ void raylib_grid (void)
 
     for (int i = 0; i < MAX_RECS_X * MAX_RECS_Y; i++)
     {
-      recs[i].height = RECS_HEIGHT / 2;
-      recs[i].width = RECS_WIDTH / 2;
+      recs[i].height = RECS_SIZE / 2;
+      recs[i].width = RECS_SIZE / 2;
     }
 
     state = 0;

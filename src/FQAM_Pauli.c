@@ -9,128 +9,103 @@
 #include "FQAM.h"
 #include <string.h>
 
-#define TMP_DATA_TYPE FLA_DOUBLE_COMPLEX
+static int pauli_dim = 1;
 
-#define incr_addr(i, j) ((i * rs) + (j * cs)) // Address incremental
-#define access(i, j) (buf + (i * rs) + (j * cs)) // Address incremental
-
-int test_dim = 2;
-FQAM_Op x_op;
-FQAM_Op z_op;
-FQAM_Op y_op;
-FQAM_Op eye_op;
-
-// Call operator create,
-static void generate_x (void);
-static void generate_z (void);
-static void generate_y (void);
-static void generate_eye (void);
-
-/* Initializes static allocated pauli operators */
-void pauli_ops_init_ (void)
+/* Stores identity into operator A*/
+void FQAM_Pauli_eye (FQAM_Op *A)
 {
-  // generate_x ();
-  // generate_z ();
-  // generate_eye ();
-  // generate_y (); 
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1;
+
+  FQAM_Op_create (A, "Eye\0", pauli_dim);
+
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
+
+  // |0><0| + |1><1|
+  FQAM_Basis_outer (ket0, ket0, &outer0); // |1><1|
+  FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
+
+  FQAM_Op_add (FQAM_ONE, outer0, A);
+  FQAM_Op_add (FQAM_ONE, outer1, A);
 }
 
-FQAM_Op *FQAM_Pauli_x (void) {FQAM_stage_append (&x_op);} 
-FQAM_Op *FQAM_Pauli_y (void) {FQAM_stage_append (&y_op);} 
-FQAM_Op *FQAM_Pauli_z (void) {FQAM_stage_append (&z_op);}
-FQAM_Op *FQAM_Pauli_eye (void) {FQAM_stage_append (&eye_op);} 
+/* Stores Pauli X into operator A*/
+void FQAM_Pauli_x (FQAM_Op *A)
+{
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1;
 
-/*
-  TODO: The way generated the pauli matrices bellow is just temporary. In the future I
-  need to make them call into operators module
-*/
+  FQAM_Op_create (A, "Not\0", pauli_dim);
 
-// static void generate_x (void)
-// {
-//   int rs, cs;
-//   char name[] = "not \0";
-  
-//   // Initialize operator and set FLA matrix
-//   FQAM_Op_create (&x_op, name);  
-//   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &x_op.mat_repr);
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
 
-//   // Get buffer address
-//   dcomplex *buf = FLA_Obj_buffer_at_view (x_op.mat_repr);
+  // |0><1| + |1><0|
+  FQAM_Basis_outer (ket0, ket1, &outer0); // |0><1|
+  FQAM_Basis_outer (ket1, ket0, &outer1); // |1><0|
 
-//   // Access's array elements and set to proper values
-//   rs = FLA_Obj_row_stride (x_op.mat_repr);
-//   cs = FLA_Obj_col_stride (x_op.mat_repr);
+  FQAM_Op_add (FQAM_ONE, outer0, A);
+  FQAM_Op_add (FQAM_ONE, outer1, A);
+}
 
-//   access (0, 0)->real = 0.0;
-//   access (1, 1)->real = 0.0;
-//   access (0, 1)->real = 1.0;
-//   access (1, 0)->real = 1.0;
-  
-//   access (0, 0)->imag = 0.0;
-//   access (1, 1)->imag = 0.0;
-//   access (0, 1)->imag = 0.0;
-//   access (1, 0)->imag = 0.0;
-// }
+#define FQAM_COMPLEX(real, imag) ((dcomplex){real, imag})
 
-// static void generate_z (void)
-// {
-//   int rs, cs;
+void FQAM_Pauli_y (FQAM_Op *A)
+{
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1;
 
-//   char name[] = "Invert \0";
-  
-//   FQAM_Op_create (&z_op, name);  
-//   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &z_op.mat_repr);
+  FQAM_Op_create (A, "Y\0", pauli_dim);
 
-//   // Get buffer address
-//   dcomplex *buf = FLA_Obj_buffer_at_view (z_op.mat_repr);
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
 
-//   // Access's array elements and set to proper values
-//   rs = FLA_Obj_row_stride (z_op.mat_repr);
-//   cs = FLA_Obj_col_stride (z_op.mat_repr);
+  // |0><1| + |1><0|
+  FQAM_Basis_outer (ket0, ket1, &outer0); // |0><1|
+  FQAM_Basis_outer (ket1, ket0, &outer1); // |1><0|
 
-//   access (0, 0)->real = 0.0;
-//   access (1, 1)->real = -1.0;
-//   access (0, 1)->real = 0.0;
-//   access (1, 0)->real = 0.0;
-  
-//   access (0, 0)->imag = 0.0;
-//   access (1, 1)->imag = 0.0;
-//   access (0, 1)->imag = 0.0;
-//   access (1, 0)->imag = 0.0;
-// }
+  FQAM_Op_add (FQAM_COMPLEX (0, 1), outer0, A);
+  FQAM_Op_add (FQAM_COMPLEX (0, -1), outer1, A);
+}
 
-// static void generate_eye (void)
-// {
-//   char name[] = "Identity \0";
-//   FQAM_Op_create (&eye_op, name);  
-//   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &eye_op.mat_repr);
-//   FLA_Set_to_identity (eye_op.mat_repr);
-// }
+void FQAM_Pauli_z (FQAM_Op *A)
+{
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1;
 
-// static void generate_y (void) 
-// { 
-//   int rs, cs;
-//   char name[] = "Y gate \0";
-  
-//   // Initialize operator and set FLA matrix
-//   FQAM_Op_create (&y_op, name);  
-//   FLA_Obj_create (TMP_DATA_TYPE, test_dim, test_dim, 0, 0, &y_op.mat_repr);
+  FQAM_Op_create (A, "Z\0", pauli_dim);
 
-//   // Get buffer address
-//   dcomplex *buf = FLA_Obj_buffer_at_view (y_op.mat_repr);
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
 
-//   // Access's array elements and set to proper values
-//   rs = FLA_Obj_row_stride (y_op.mat_repr);
-//   cs = FLA_Obj_col_stride (y_op.mat_repr);
+  // |0><0| + |1><1|
+  FQAM_Basis_outer (ket0, ket0, &outer0); // |1><1|
+  FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
 
-//   access (0, 0)->real = 0.0;
-//   access (1, 1)->real = 0.0;
-//   access (0, 1)->real = 1.0;
-//   access (1, 0)->real = 1.0;
-  
-//   access (0, 0)->imag = 0.0;
-//   access (1, 1)->imag = 1.0;
-//   access (0, 1)->imag = 1.0;
-//   access (1, 0)->imag = 0.0;
-// }
+  FQAM_Op_add (FQAM_ONE, outer0, A);
+  FQAM_Op_add (FQAM_CMPX(-1, 0), outer1, A);  
+}
 
+void FQAM_hadamard (FQAM_Op *A)
+{
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1, outer2, outer3;
+
+  FQAM_Op_create (A, "Hadamard\0", pauli_dim);
+
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
+
+  // |0><0| + |1><0| + |0><1| + |1><1|
+  FQAM_Basis_outer (ket0, ket0, &outer0); // |0><0|
+  FQAM_Basis_outer (ket1, ket0, &outer1); // |1><0|
+  FQAM_Basis_outer (ket0, ket1, &outer2); // |0><1|
+  FQAM_Basis_outer (ket1, ket1, &outer3); // |1><1|
+
+  // Alpha set as hadamard coefficients
+  FQAM_Op_add (FQAM_PI4, outer0, A);
+  FQAM_Op_add (FQAM_PI4, outer1, A);
+  FQAM_Op_add (FQAM_PI4, outer2, A);
+  FQAM_Op_add (FQAM_7PI4, outer3, A);
+}

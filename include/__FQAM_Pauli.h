@@ -1,7 +1,7 @@
 #include "FQAM.h"
 
-FQAM_Op * FQAM_Pauli_x (void);
-FQAM_Op * FQAM_Pauli_y (void);
-FQAM_Op * FQAM_Pauli_z (void);
-FQAM_Op * FQAM_Pauli_eye (void);
-void pauli_ops_init_ (void);
+void FQAM_Pauli_x (FQAM_Op *A);
+void FQAM_Pauli_y (FQAM_Op *A);
+void FQAM_Pauli_z (FQAM_Op *A);
+void FQAM_Pauli_eye (FQAM_Op *A);
+void FQAM_hadamard (FQAM_Op *A);
