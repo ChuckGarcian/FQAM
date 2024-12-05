@@ -17,8 +17,11 @@ FFLAGS := $(CFLAGS)
 DEBUG_FLAGS := -g -O0
 
 # Source and object files
-SRCS := $(wildcard $(SRC_DIR)/*.c)
-OBJS := $(patsubst $(SRC_DIR)/%.c,%.o,$(SRCS))
+SRCS := $(shell find $(SRC_DIR) -name '*.c')
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
+
+# Create output directories
+$(shell mkdir -p $(sort $(dir $(OBJS))))
 
 # Linker and include flags
 LFLAGS := -L./$(LIB_DIR)/ -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
@@ -38,7 +41,7 @@ $(BIN_DIR)/app.x: $(OBJS)
 	mkdir -p $(BIN_DIR)
 	$(CC) $^ $(CFLAGS) $(FLAME_LIB) $(BLAS_LIB) $(IFLAGS) $(LFLAGS) -o $@
 
-%.o: $(SRC_DIR)/%.c
+$(BIN_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $(CFLAGS) $(IFLAGS) $< -o $@
 
 # Raylib targets
