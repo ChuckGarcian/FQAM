@@ -170,20 +170,30 @@ void test_5 (void)
 
   // Testing hadamard: Initial state 1
   FQAM_init (1, 0);
-  FQAM_Op hadamard, y_op, z_op, eye_op, x_op;
+  FQAM_Op hadamard, y_op, z_op, eye_op, x_op, p_op;
 
   FQAM_hadamard (&hadamard);
   FQAM_Pauli_y (&y_op);
   FQAM_Pauli_z (&z_op);
   FQAM_Pauli_x (&x_op);
   FQAM_Pauli_eye (&eye_op);
+  FQAM_Phase_T (&p_op);
 
   FQAM_show_statevector ();
+  // FQAM_stage_append (p_op);
   FQAM_stage_append (eye_op);
+  // FQAM_stage_append (hadamard);
   FQAM_stage_append (hadamard);
-  FQAM_stage_append (z_op);
+  FQAM_stage_append (p_op);
+  // FQAM_stage_append (x_op);
   FQAM_stage_append (hadamard);
+  FQAM_stage_append (hadamard);
+  FQAM_stage_append (p_op);
+  obFQAM_stage_append (hadamard);
+  // FQAM_stage_append (y_op);
+  
   FQAM_stage_append (eye_op);
+  // FQAM_stage_append (hadamard);
 
   FQAM_Render_feynman_diagram ();
 

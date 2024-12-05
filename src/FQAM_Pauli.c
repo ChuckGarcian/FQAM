@@ -30,6 +30,25 @@ void FQAM_Pauli_eye (FQAM_Op *A)
   FQAM_Op_add (FQAM_ONE, outer1, A);
 }
 
+/* Parameterized Phase */
+void FQAM_PhaseA (double angle, FQAM_Op *A)
+{
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1;
+
+  FQAM_Op_create (A, "Phase\0", pauli_dim);
+
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
+
+  // |0><0| + |1><1|
+  FQAM_Basis_outer (ket0, ket0, &outer0); // |1><1|
+  FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
+
+  FQAM_Op_add (FQAM_CMPX (1, 0), outer0, A);
+  FQAM_Op_add (FQAM_CMPXA (angle), outer1, A);
+}
+
 /* Stores Pauli X into operator A*/
 void FQAM_Pauli_x (FQAM_Op *A)
 {
@@ -84,7 +103,7 @@ void FQAM_Pauli_z (FQAM_Op *A)
   FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
 
   FQAM_Op_add (FQAM_ONE, outer0, A);
-  FQAM_Op_add (FQAM_CMPX(-1, 0), outer1, A);  
+  FQAM_Op_add (FQAM_CMPX (-1, 0), outer1, A);
 }
 
 void FQAM_hadamard (FQAM_Op *A)

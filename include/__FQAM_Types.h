@@ -4,6 +4,7 @@
 #define FQAM_7PI4 ((dcomplex){-1 * (1 / sqrt (2)), 0})
 #define FQAM_ONE ((dcomplex){1, 0})
 
+#define FQAM_CMPXA(angle) ((dcomplex){.real = cos (angle), .imag = sin (angle)})
 #define FQAM_CMPX(real, imag) ((dcomplex){real, imag})
 
 #define FQAM_SUCCESS (-1)
@@ -22,7 +23,7 @@ typedef struct
 typedef struct
 {
   void *stack_addr; // Stack Address (Used to access during finalization)
-  char name[10];    // Operator Name
+  char name[32];    // Operator Name
   FLA_Obj mat_repr; // Operator Matrix Representation
   int dimension;    // Hilbert Dimension
   int mat_repr_initialized;
