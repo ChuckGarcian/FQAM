@@ -102,10 +102,7 @@ def gen_kernel_tests(min_size=1, max_size=10, num_tests=5):
         generated_code = generate_matrix_code(A, B, test_id)
         print(generated_code)
 
-# Example usage
-gen_kernel_tests()
 
-# Example usage
 if __name__ == "__main__":
     gen_kernel_tests ()
     # Define input matrices
