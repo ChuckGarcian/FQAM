@@ -118,4 +118,16 @@ void FQAM_Op_add (dcomplex alpha, FQAM_Op term, FQAM_Op *result)
             result->mat_repr);
 }
 
+void FQAM_Op_tensor (FQAM_Op A, FQAM_Op B, FQAM_Op C)
+{
+  
+  // Create new Operator C, and
+  int m, p;
+  m = FLA_Obj_width (A.mat_repr);
+  p = FLA_Obj_width (B.mat_repr);
+
+  // FQAM_Op_create (A, "None\0", m*p);
+}
+
+
 // bool FQAM_Op_check      (FQAM_Op op); // Asserts 'boundary conditions

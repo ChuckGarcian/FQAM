@@ -54,3 +54,7 @@ $$
 ## 12.03.24 Tuesday
 
 - Rewrite pauli module such that it uses the new operator subsystem/api
+
+## 12.05.24 Thursday
+
+- Libflame has a special matrix type for hermitian which only stores either the lower or upper triangular. I should look into using that at some point

@@ -1,4 +1,4 @@
-MAIN := flatex_path_probability_algo.tex
+MAIN := flatex_tensor.tex
 OUTDIR := output
 
 all: 

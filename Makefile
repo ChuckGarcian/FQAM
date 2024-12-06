@@ -39,10 +39,10 @@ debug: $(BIN_DIR)/app.x
 
 $(BIN_DIR)/app.x: $(OBJS)
 	mkdir -p $(BIN_DIR)
-	$(CC) $^ $(CFLAGS) $(FLAME_LIB) $(BLAS_LIB) $(IFLAGS) $(LFLAGS) -o $@
+	$(CC) $^ $(IFLAGS) $(CFLAGS) $(FLAME_LIB) $(BLAS_LIB) $(LFLAGS) -o $@
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) -c $(CFLAGS) $(IFLAGS) $< -o $@
+	$(CC) -c $(IFLAGS) $(CFLAGS) $< -o $@
 
 # Raylib targets
 build_raylib:

@@ -5,9 +5,9 @@ FQAM_Error FQAM_operator_free (FQAM_Op *operator);
 
 /* Operator Generation Functions */
 
-
 FQAM_Basis FQAM_Basis_create   (int num_qubits, double angle, int eigen_value);
 void FQAM_Basis_outer (FQAM_Basis ket0, FQAM_Basis ket1, FQAM_Op *outer);
+void FQAM_Op_tensor (FQAM_Op A, FQAM_Op B, FQAM_Op C);
 void FQAM_Op_add (dcomplex alpha, FQAM_Op term, FQAM_Op *result);
 
 

@@ -8,75 +8,29 @@
 
 #include "FLAME.h"
 #include "FQAM.h"
+#include "__kernels.h"
 #include <stdio.h>
 
 #define ASSERTF_DEF_ONCE
 #include "assertf.h"
 
 static int test_dim = 1;
-
+// General usage tests
 void test_1 (void);
 void test_2 (void);
 void test_3 (void);
 void test_4 (void);
 void test_5 (void);
 
-void example_hadamard (void)
-{
-  FQAM_init (1, 0);
-  FQAM_Op hadamard;
+// Operator creation tests
+void example_eye (void);
+void test_not (void);
+void example_hadamard (void);
 
-  FQAM_hadamard (&hadamard);
-  FQAM_stage_append (hadamard);
-  FQAM_Render_feynman_diagram ();
+// Tensor product tests
+extern void test_tensor_1 (void);
 
-  _debug_FQAM_show_stage ();
-  FQAM_show_statevector ();
-  printf ("Done \n");
-}
-
-void example_eye (void)
-{
-  FQAM_init (test_dim, 0);
-  FQAM_Basis ket0, ket1;
-  FQAM_Op outer0, outer1, res;
-
-  FQAM_Op_create (&res, "Eye\0", test_dim);
-
-  ket0 = FQAM_Basis_create (1, 0, 0);
-  ket1 = FQAM_Basis_create (1, 0, 1);
-
-  // |0><0| + |1><1|
-  FQAM_Basis_outer (ket0, ket0, &outer0); // |1><1|
-  FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
-
-  FQAM_Op_add (FQAM_ONE, outer0, &res);
-  FQAM_Op_add (FQAM_ONE, outer1, &res);
-
-  _debug_FQAM_show_stage ();
-  FQAM_stage_append (res);
-
-  _debug_FQAM_show_stage ();
-  FQAM_Render_feynman_diagram ();
-  printf ("Done \n");
-}
-
-void test_not (void)
-{
-  FQAM_Op not;
-
-  FQAM_Pauli_x (&not);
-
-  _debug_FQAM_show_stage ();
-  FQAM_stage_append (not);
-  FQAM_stage_append (not);
-  FQAM_stage_append (not);
-
-  _debug_FQAM_show_stage ();
-  FQAM_Render_feynman_diagram ();
-  printf ("Done \n");
-}
-
+// Render tests
 void test_render_1 (void);
 
 int main (void)
@@ -85,11 +39,12 @@ int main (void)
   // test_2 ();
   // test_3 ();
   // test_4 ();
-  test_5 ();
+  // test_5 ();
 
   // test_render_1 ();
   // example_hadamard ();
   // example_not ();
+  test_tensor_1 ();
 }
 
 void test_1 (void)
@@ -177,7 +132,7 @@ void test_5 (void)
   FQAM_Pauli_z (&z_op);
   FQAM_Pauli_x (&x_op);
   FQAM_Pauli_eye (&eye_op);
-  FQAM_Phase_T (&p_op);
+  // FQAM_Phase_T (&p_op);
 
   FQAM_show_statevector ();
   // FQAM_stage_append (p_op);
@@ -189,9 +144,9 @@ void test_5 (void)
   FQAM_stage_append (hadamard);
   FQAM_stage_append (hadamard);
   FQAM_stage_append (p_op);
-  obFQAM_stage_append (hadamard);
+  FQAM_stage_append (hadamard);
   // FQAM_stage_append (y_op);
-  
+
   FQAM_stage_append (eye_op);
   // FQAM_stage_append (hadamard);
 
@@ -216,4 +171,60 @@ void test_render_1 (void)
   // _debug_FQAM_show_stage ();
   FQAM_Render_feynman_diagram ();
   printf ("Passed Render Test 1 \n");
+}
+
+void example_hadamard (void)
+{
+  FQAM_init (1, 0);
+  FQAM_Op hadamard;
+
+  FQAM_hadamard (&hadamard);
+  FQAM_stage_append (hadamard);
+  FQAM_Render_feynman_diagram ();
+
+  _debug_FQAM_show_stage ();
+  FQAM_show_statevector ();
+  printf ("Done \n");
+}
+
+void example_eye (void)
+{
+  FQAM_init (test_dim, 0);
+  FQAM_Basis ket0, ket1;
+  FQAM_Op outer0, outer1, res;
+
+  FQAM_Op_create (&res, "Eye\0", test_dim);
+
+  ket0 = FQAM_Basis_create (1, 0, 0);
+  ket1 = FQAM_Basis_create (1, 0, 1);
+
+  // |0><0| + |1><1|
+  FQAM_Basis_outer (ket0, ket0, &outer0); // |1><1|
+  FQAM_Basis_outer (ket1, ket1, &outer1); // |1><1|
+
+  FQAM_Op_add (FQAM_ONE, outer0, &res);
+  FQAM_Op_add (FQAM_ONE, outer1, &res);
+
+  _debug_FQAM_show_stage ();
+  FQAM_stage_append (res);
+
+  _debug_FQAM_show_stage ();
+  FQAM_Render_feynman_diagram ();
+  printf ("Done \n");
+}
+
+void test_not (void)
+{
+  FQAM_Op not;
+
+  FQAM_Pauli_x (&not);
+
+  _debug_FQAM_show_stage ();
+  FQAM_stage_append (not);
+  FQAM_stage_append (not);
+  FQAM_stage_append (not);
+
+  _debug_FQAM_show_stage ();
+  FQAM_Render_feynman_diagram ();
+  printf ("Done \n");
 }
