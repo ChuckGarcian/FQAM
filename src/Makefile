@@ -17,10 +17,10 @@ debug: CFLAGS += $(DEBUG_FLAGS)
 debug: $(BIN_DIR)/debug_$(TARGET)
 
 $(BIN_DIR)/$(TARGET): $(OBJS)
-	$(CC) -r $(OBJS) -o $@
+	$(CC) $(OBJS) -r -o $@
 
 $(SRC_BIN_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) -c $(IFLAGS) $(CFLAGS) $< -o $@
+	$(CC) $(IFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf ./$(SRC_BIN_DIR)

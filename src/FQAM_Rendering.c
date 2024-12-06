@@ -217,6 +217,7 @@ void draw_next_state (Image *image, FLA_Obj state, int time_step,
 
   FLA_Obj_free (&a1t);
 }
+
 #define access(i, j) (buf + (i * rs) + (j * cs)) // Address incremental
 /* Draws transition lines/edges between state layers from adjacent matrix 'A'
 Arguments:
@@ -228,7 +229,6 @@ void draw_transition_lines (Image *image, FLA_Obj A, char *op_name, int time_ste
                             const int spacing_x, const int spacing_y,
                             const int thickness)
 {
-
   int state_index = 0;
   int centering_delta = RECS_SIZE * 0.40;
   int font_size = 13;

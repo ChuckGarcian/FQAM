@@ -5,9 +5,14 @@
 #include <stdbool.h>
 
 #include "__FQAM_Types.h"
+#include "__FQAM_Main.h"
 #include "__FQAM_Operator.h"
 #include "__FQAM_Pauli.h"
-#include "__FQAM_Main.h"
 #include "__FQAM_Rendering.h"
 
-#endif 
+
+
+
+
+
+#endif

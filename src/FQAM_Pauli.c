@@ -128,3 +128,32 @@ void FQAM_hadamard (FQAM_Op *A)
   FQAM_Op_add (FQAM_PI4, outer2, A);
   FQAM_Op_add (FQAM_7PI4, outer3, A);
 }
+
+// void FQAM_CNOT (FQAM_Op *A)
+// {
+//   FQAM_Basis ket0, ket1;
+//   FQAM_Op outer00, outer11;
+
+//   FQAM_Op_create (A, "Hadamard\0", pauli_dim);
+
+//   ket0 = FQAM_Basis_create (1, 0, 0);
+//   ket1 = FQAM_Basis_create (1, 0, 1);
+  
+//   FQAM_Basis_outer (ket0, ket0, &outer00); // |0><0|
+//   FQAM_Basis_outer (ket1, ket1, &outer11); // |1><1|
+
+//   FQAM_Op eye_op;
+//   FQAM_Op x_op;
+
+//   // outer00 := outer00 ⊗ x_op
+//   FQAM_Op_tensor (outer00, x_op, outer00);
+  
+//   // outer11 := outer11 ⊗ eye_op
+//   FQAM_Op_tensor (outer00, eye_op, outer11);
+
+//   // |0><0|I + |1><1|X
+//   FQAM_Op_add (FQAM_PI4, outer0, A);
+//   FQAM_Op_add (FQAM_PI4, outer1, A);
+//   FQAM_Op_add (FQAM_PI4, outer2, A);
+//   FQAM_Op_add (FQAM_7PI4, outer3, A);
+// }

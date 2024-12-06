@@ -15,24 +15,29 @@ static int kernel_kron_prod_rec_base (FLA_Obj A, FLA_Obj B, FLA_Obj C);
 static void check_dimensions (FLA_Obj A, FLA_Obj B, FLA_Obj C);
 
 /***
- *  Computes the Kronecker product (tensor product) of matrices A and B, and stores
- * the result in C. Matrix C must be pre-initialized to be conformal to the
- * dimensions of A ⊗ B. Specifically, if A is an mxn matrix and B is a pxq matrix,
- * then C must be an (mp)x(nq) matrix.
- *
- * Notes: In the case function is called for vectors, it must be the case they
- * are row vectors (mx1).
- * Proof for this function is in docs 'tensor_proof.pdf'
+ * Recursively computes the Kronecker product (tensor product) of matrices A and 
+ * B, and stores the result in C. Matrix C must be pre-initialized to be conformal 
+ * to the dimensions of A ⊗ B. Specifically, if A is an mxn matrix and B is a 
+ * pxq matrix, then C must be an (mp)x(nq) matrix.
  *
  * Arguments:
- *    FLA_Obj A: Matrix representation of the first operand.
- *    FLA_Obj B: Matrix representation of the second operand.
- *    FLA_Obj C: Matrix representation of the resulting Kronecker product.
+ *    FLA_Obj A:  Matrix representation of the first operand.
+ *    FLA_Obj B:  Matrix representation of the second operand.
+ *    FLA_Obj C:  Matrix representation of the resulting Kronecker product.
+ *    int nb_alg: Block partition size.
+ * 
+ * Notes: 
+ *  - Matrix object dimensions are assumed powers of 2's and either square or,
+ *    row vector.
+ *  - Block size dictates performance, by way of effective cache utilization.
+ *  - In the case function is called for vectors, it must be the case they
+ *    are row vectors (mx1).
+ *  - Proof for this function is in docs 'tensor_proof.pdf'
  */
 int kernel_kron_prod_rec (FLA_Obj A, FLA_Obj B, FLA_Obj C, int nb_alg)
 {
-  // Base case: A is a scalar
-  if (FLA_Obj_length (A) <= 1)
+  // Base case
+  if (FLA_Obj_length (A) <= nb_alg / 2) 
   {
     kernel_kron_prod_rec_base (A, B, C);
     return 0;

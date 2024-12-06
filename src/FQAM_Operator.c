@@ -118,7 +118,7 @@ void FQAM_Op_add (dcomplex alpha, FQAM_Op term, FQAM_Op *result)
             result->mat_repr);
 }
 
-void FQAM_Op_tensor (FQAM_Op A, FQAM_Op B, FQAM_Op C)
+void FQAM_Op_tensor_prod (FQAM_Op A, FQAM_Op B, FQAM_Op C)
 {
   
   // Create new Operator C, and
