@@ -1,5 +1,5 @@
 include common.mk
-
+include runtest.mk
 # Root directory path
 ROOT_DIR := $(realpath $(CURDIR))
 export ROOT_DIR
